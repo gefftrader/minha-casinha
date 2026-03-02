@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Minha Casinha · Admin 🏠</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F4EF; --surface: #FFFFFF; --surface2: #F0EDE7; --border: #E2DDD6;
+    --text: #1A1714; --muted: #8A847C; --accent: #C8522A; --accent-light: #F5E8E2;
+    --green: #2A7A4B; --green-light: #E2F0E9; --orange: #E07B39; --orange-light: #FDF0E6;
+    --red: #D63B3B; --red-light: #FDE8E8; --blue: #3B6FD6; --blue-light: #E8EFFE;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:15px; }
+
+  /* LOGIN */
+  .login-screen { position:fixed; inset:0; background:var(--text); display:flex; align-items:center; justify-content:center; z-index:999; transition:opacity 0.4s; }
+  .login-screen.gone { opacity:0; pointer-events:none; }
+  .login-box { background:var(--bg); border-radius:24px; padding:36px 32px 32px; width:90%; max-width:340px; display:flex; flex-direction:column; align-items:center; }
+  .login-logo { font-family:'DM Serif Display',serif; font-size:30px; letter-spacing:-0.5px; margin-bottom:2px; display:flex; align-items:center; gap:8px; }
+  .login-badge { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; background:var(--accent); color:white; padding:2px 8px; border-radius:99px; margin-bottom:22px; }
+  .login-field { width:100%; margin-bottom:12px; }
+  .login-field label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.7px; color:var(--muted); display:block; margin-bottom:6px; }
+  .login-field input { width:100%; padding:13px 14px; border:1.5px solid var(--border); border-radius:12px; font-size:15px; font-family:'DM Sans',sans-serif; background:white; color:var(--text); outline:none; transition:border-color 0.15s; }
+  .login-field input:focus { border-color:var(--accent); }
+  .btn-login { width:100%; padding:14px; background:var(--text); color:white; border:none; border-radius:12px; font-size:15px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; margin-top:6px; transition:background 0.2s; }
+  .btn-login:hover { background:#2e2a26; }
+  .login-err { font-size:12px; color:var(--red); text-align:center; margin-top:10px; min-height:18px; }
+
+  /* LOADING */
+  .loading-screen { position:fixed; inset:0; background:var(--text); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; z-index:998; transition:opacity 0.4s; }
+  .loading-screen.gone { opacity:0; pointer-events:none; }
+  .loading-logo { font-family:'DM Serif Display',serif; font-size:28px; color:white; display:flex; align-items:center; gap:8px; }
+  .spinner { width:26px; height:26px; border:2.5px solid rgba(255,255,255,0.2); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .loading-msg { font-size:13px; color:rgba(255,255,255,0.5); }
+
+  /* HEADER */
+  header { background:var(--text); color:white; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+  .logo { font-family:'DM Serif Display',serif; font-size:20px; letter-spacing:-0.5px; display:flex; align-items:center; gap:8px; }
+  .logo-admin-badge { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; background:var(--accent); color:white; padding:2px 7px; border-radius:99px; font-family:'DM Sans',sans-serif; }
+  .header-right { display:flex; gap:8px; align-items:center; }
+  .btn-icon { background:rgba(255,255,255,0.1); border:none; color:white; width:36px; height:36px; border-radius:8px; cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+  .btn-icon:hover { background:rgba(255,255,255,0.2); }
+  .sync-pill { display:flex; align-items:center; gap:5px; font-size:11px; color:rgba(255,255,255,0.5); }
+  .sync-dot { width:6px; height:6px; border-radius:50%; background:#4CAF50; }
+  .sync-dot.busy { width:10px; height:10px; background:transparent; border:2px solid #FFC107; border-top-color:transparent; border-radius:50%; animation:spin 0.6s linear infinite; }
+  .sync-dot.err { background:#f44336; }
+
+  /* MAIN */
+  main { max-width:860px; margin:0 auto; padding:24px 16px 100px; }
+
+  /* TABS */
+  .tabs-bar { display:flex; gap:4px; background:var(--surface2); padding:4px; border-radius:12px; margin-bottom:24px; }
+  .tab-btn { flex:1; padding:9px 12px; border:none; border-radius:8px; font-size:12px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; background:none; color:var(--muted); transition:all 0.15s; display:flex; align-items:center; justify-content:center; gap:5px; white-space:nowrap; }
+  .tab-btn.active { background:var(--surface); color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+
+  /* KPI */
+  .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+  .kpi-card { background:var(--surface); border-radius:16px; padding:16px; border:1px solid var(--border); }
+  .kpi-card.dark { background:var(--text); color:white; border-color:var(--text); }
+  .kpi-card.green { background:var(--green-light); border-color:#C5E0D0; }
+  .kpi-card.orange { background:var(--orange-light); border-color:#F5D5B4; }
+  .kpi-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--muted); margin-bottom:6px; }
+  .kpi-card.dark .kpi-label { color:rgba(255,255,255,0.45); }
+  .kpi-card.green .kpi-label { color:var(--green); }
+  .kpi-card.orange .kpi-label { color:var(--orange); }
+  .kpi-value { font-family:'DM Serif Display',serif; font-size:24px; letter-spacing:-0.5px; line-height:1.1; }
+  .kpi-sub { font-size:11px; color:var(--muted); margin-top:3px; }
+  .kpi-card.dark .kpi-sub { color:rgba(255,255,255,0.4); }
+  .kpi-card.green .kpi-sub { color:#5A9E7A; }
+  .kpi-card.orange .kpi-sub { color:#B85E20; }
+
+  /* SECTION BOX */
+  .section-box { background:var(--surface); border-radius:16px; border:1px solid var(--border); overflow:hidden; margin-bottom:14px; }
+  .section-head { padding:14px 18px 12px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .section-head-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--muted); }
+  .btn-primary { padding:7px 14px; background:var(--text); color:white; border:none; border-radius:8px; font-size:12px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; gap:5px; }
+  .btn-primary:hover { background:#2e2a26; }
+  .btn-sm { padding:5px 11px; font-size:11px; border-radius:7px; }
+  .btn-ghost { background:var(--surface2); color:var(--text); border:1px solid var(--border); padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all 0.15s; }
+  .btn-ghost:hover { background:var(--border); }
+
+  /* CLIENT ROW */
+  .client-item { display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid var(--border); gap:12px; transition:background 0.15s; }
+  .client-item:last-child { border-bottom:none; }
+  .client-item:hover { background:var(--bg); }
+  .client-avatar { width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; background:var(--surface2); }
+  .client-info { flex:1; min-width:0; }
+  .client-name { font-size:14px; font-weight:600; }
+  .client-meta { font-size:11px; color:var(--muted); margin-top:2px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .client-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .dias-badge { font-size:12px; font-weight:700; min-width:44px; text-align:center; }
+  .dias-ok { color:var(--green); }
+  .dias-warn { color:var(--orange); }
+  .dias-venc { color:var(--red); }
+
+  /* BADGES */
+  .badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px; white-space:nowrap; }
+  .badge-ativo { background:var(--green-light); color:var(--green); }
+  .badge-vencendo { background:var(--orange-light); color:var(--orange); animation:pulse-orange 2s infinite; }
+  .badge-vencido { background:var(--red-light); color:var(--red); animation:pulse-red 2s infinite; }
+  .badge-inativo { background:var(--surface2); color:var(--muted); }
+  @keyframes pulse-red { 0%,100%{opacity:1}50%{opacity:0.65} }
+  @keyframes pulse-orange { 0%,100%{opacity:1}50%{opacity:0.7} }
+
+  /* ACTION BTNS */
+  .action-btn { background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; padding:5px 6px; border-radius:7px; transition:all 0.15s; white-space:nowrap; font-family:'DM Sans',sans-serif; font-weight:500; }
+  .action-btn:hover { background:var(--surface2); }
+  .action-btn.renovar:hover { color:var(--green); background:var(--green-light); }
+  .action-btn.bloquear:hover { color:var(--red); background:var(--red-light); }
+  .action-btn.ver:hover { color:var(--accent); background:var(--accent-light); }
+
+  /* MINI PROGRESS */
+  .mini-prog { height:4px; background:var(--surface2); border-radius:99px; overflow:hidden; width:60px; flex-shrink:0; }
+  .mini-prog-bar { height:100%; border-radius:99px; transition:width 0.4s; }
+
+  /* FINANCEIRO */
+  .fin-chart { padding:20px 18px; }
+  .month-bars { display:flex; align-items:flex-end; gap:6px; height:80px; margin-bottom:8px; }
+  .month-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .month-bar { width:100%; border-radius:6px 6px 0 0; min-height:4px; cursor:pointer; position:relative; }
+  .month-bar.current { background:var(--accent); }
+  .month-bar.past { background:var(--border); }
+  .month-bar:hover::after { content:attr(data-val); position:absolute; top:-22px; left:50%; transform:translateX(-50%); background:var(--text); color:white; font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; white-space:nowrap; font-family:'DM Sans',sans-serif; }
+  .month-label { font-size:9px; color:var(--muted); font-weight:600; }
+  .fin-row { display:flex; align-items:center; padding:11px 18px; border-bottom:1px solid var(--border); gap:12px; transition:background 0.15s; }
+  .fin-row:last-child { border-bottom:none; }
+  .fin-row:hover { background:var(--bg); }
+  .fin-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .fin-client { flex:1; min-width:0; }
+  .fin-client-name { font-size:13px; font-weight:600; }
+  .fin-client-date { font-size:11px; color:var(--muted); margin-top:1px; }
+  .fin-valor { font-family:'DM Serif Display',serif; font-size:16px; flex-shrink:0; }
+
+  /* OVERLAY / MODAL */
+  .overlay { position:fixed; inset:0; background:rgba(26,23,20,0.55); backdrop-filter:blur(3px); z-index:200; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.25s; }
+  .overlay.open { opacity:1; pointer-events:all; }
+  .modal { background:var(--surface); border-radius:20px 20px 0 0; padding:20px 20px 36px; width:100%; max-width:680px; transform:translateY(30px); transition:transform 0.3s cubic-bezier(0.16,1,0.3,1); max-height:92vh; overflow-y:auto; }
+  .overlay.open .modal { transform:translateY(0); }
+  .modal-handle { width:36px; height:4px; background:var(--border); border-radius:99px; margin:0 auto 18px; }
+  .modal-title { font-family:'DM Serif Display',serif; font-size:22px; margin-bottom:6px; }
+  .modal-sub { font-size:13px; color:var(--muted); margin-bottom:20px; }
+  .form-group { margin-bottom:14px; }
+  .form-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.7px; color:var(--muted); margin-bottom:6px; display:block; }
+  .form-input { width:100%; padding:12px 13px; border:1.5px solid var(--border); border-radius:10px; font-size:15px; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); transition:border-color 0.15s; outline:none; -webkit-appearance:none; }
+  .form-input:focus { border-color:var(--accent); }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .btn-save { width:100%; padding:14px; background:var(--text); color:white; border:none; border-radius:12px; font-size:15px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; margin-top:8px; transition:background 0.2s; }
+  .btn-save:hover { background:#2e2a26; }
+  .btn-save:disabled { opacity:0.5; cursor:not-allowed; }
+  .btn-save.green { background:var(--green); }
+  .btn-save.green:hover { background:#1d6038; }
+
+  /* DIAS PICKER */
+  .dias-picker { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .dias-opt { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:12px 8px; border-radius:10px; cursor:pointer; border:1.5px solid var(--border); background:var(--bg); transition:all 0.15s; font-size:13px; font-weight:600; color:var(--muted); text-align:center; line-height:1.2; }
+  .dias-opt .dias-num { font-family:'DM Serif Display',serif; font-size:22px; }
+  .dias-opt small { font-size:10px; font-weight:500; }
+  .dias-opt.selected { border-color:var(--green); background:var(--green-light); color:var(--green); }
+
+  /* INFO/WARN BOX */
+  .info-box { background:var(--blue-light); border:1px solid #C5D5F0; border-radius:10px; padding:10px 14px; font-size:12px; color:var(--blue); margin-bottom:14px; display:flex; align-items:flex-start; gap:8px; }
+  .warn-box { background:var(--orange-light); border:1px solid #F5D5B4; border-radius:10px; padding:10px 14px; font-size:12px; color:var(--orange); margin-bottom:14px; display:flex; align-items:flex-start; gap:8px; }
+  .err-box { background:var(--red-light); border:1px solid #F5C6C6; border-radius:10px; padding:10px 14px; font-size:12px; color:var(--red); margin-bottom:14px; display:flex; align-items:flex-start; gap:8px; }
+
+  /* MONITOR CARD */
+  .monitor-card { background:var(--surface); border-radius:14px; border:1px solid var(--border); padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:14px; cursor:pointer; transition:all 0.15s; }
+  .monitor-card:hover { border-color:var(--accent); background:var(--accent-light); }
+  .monitor-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+  .monitor-info { flex:1; min-width:0; }
+  .monitor-name { font-size:14px; font-weight:600; }
+  .monitor-detail { font-size:12px; color:var(--muted); margin-top:2px; }
+  .monitor-right { text-align:right; flex-shrink:0; }
+
+  /* RING */
+  .ring-wrap { position:relative; width:64px; height:64px; flex-shrink:0; }
+  .ring-wrap svg { transform:rotate(-90deg); }
+  .ring-track { fill:none; stroke:var(--surface2); stroke-width:5; }
+  .ring-fill { fill:none; stroke-width:5; stroke-linecap:round; }
+  .ring-text { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'DM Serif Display',serif; font-size:16px; line-height:1; }
+  .ring-sub { font-size:8px; font-family:'DM Sans',sans-serif; color:var(--muted); font-weight:600; }
+
+  /* DETAIL ROW */
+  .detail-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+  .detail-row:last-child { border-bottom:none; }
+  .detail-label { font-size:12px; color:var(--muted); font-weight:500; }
+  .detail-value { font-size:13px; font-weight:600; }
+
+  /* SEARCH */
+  .search-bar { padding:12px 18px; border-bottom:1px solid var(--border); }
+  .search-input { width:100%; padding:9px 13px; border:1.5px solid var(--border); border-radius:10px; font-size:14px; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); outline:none; transition:border-color 0.15s; }
+  .search-input:focus { border-color:var(--accent); }
+
+  /* PAGE */
+  .page { display:none; }
+  .page.active { display:block; }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:32px; left:50%; transform:translateX(-50%) translateY(8px); background:var(--text); color:white; padding:9px 18px; border-radius:99px; font-size:13px; font-weight:500; opacity:0; transition:all 0.28s; pointer-events:none; white-space:nowrap; z-index:400; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  @media(max-width:600px) {
+    .kpi-grid { grid-template-columns:1fr 1fr; }
+    .tab-btn .tab-text { display:none; }
+    .client-right .mini-prog { display:none; }
+    .form-row { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-logo">Minha Casinha</div>
+  <div class="spinner"></div>
+  <div class="loading-msg" id="loadingMsg">Carregando painel…</div>
+</div>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Minha Casinha</div>
+    <div class="login-badge">Painel Admin</div>
+    <div class="login-field"><label>Usuário</label><input type="text" id="loginUser" placeholder="admin" autocapitalize="none"></div>
+    <div class="login-field"><label>Senha</label><input type="password" id="loginPass" placeholder="••••"></div>
+    <button class="btn-login" id="btnLogin">Entrar no painel</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- HEADER -->
+<header id="appHeader" style="display:none">
+  <div class="logo">Minha Casinha <span class="logo-admin-badge">Admin</span></div>
+  <div class="header-right">
+    <div class="sync-pill"><div class="sync-dot" id="syncDot"></div><span id="syncLabel">Sincronizado</span></div>
+    <button class="btn-icon" onclick="exportCSV()" title="Exportar CSV">⬇</button>
+    <button class="btn-icon" onclick="logout()" title="Sair">⏻</button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main id="appMain" style="display:none">
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab('visao')" id="tabVisao"><span>📊</span><span class="tab-text"> Visão Geral</span></button>
+    <button class="tab-btn" onclick="switchTab('clientes')" id="tabClientes"><span>👥</span><span class="tab-text"> Clientes</span></button>
+    <button class="tab-btn" onclick="switchTab('monitor')" id="tabMonitor"><span>🔍</span><span class="tab-text"> Monitor</span></button>
+    <button class="tab-btn" onclick="switchTab('financeiro')" id="tabFinanceiro"><span>💰</span><span class="tab-text"> Financeiro</span></button>
+  </div>
+
+  <!-- VISÃO GERAL -->
+  <div class="page active" id="pageVisao">
+    <div class="kpi-grid" id="kpiGrid"></div>
+    <div class="section-box">
+      <div class="section-head"><span class="section-head-title">⚠️ Atenção necessária</span><button class="btn-primary btn-sm" onclick="switchTab('clientes')">Ver todos</button></div>
+      <div id="alertList"></div>
+    </div>
+    <div class="section-box">
+      <div class="section-head"><span class="section-head-title">📋 Atividade recente</span></div>
+      <div id="activityList"></div>
+    </div>
+  </div>
+
+  <!-- CLIENTES -->
+  <div class="page" id="pageClientes">
+    <div class="section-box">
+      <div class="section-head"><span class="section-head-title">👥 Clientes</span><button class="btn-primary" onclick="openModalNovoCliente()">+ Novo cliente</button></div>
+      <div class="search-bar"><input class="search-input" type="text" placeholder="Buscar cliente…" oninput="filterClientes(this.value)"></div>
+      <div id="clientesList"></div>
+    </div>
+  </div>
+
+  <!-- MONITOR -->
+  <div class="page" id="pageMonitor">
+    <div class="section-box">
+      <div class="section-head"><span class="section-head-title">🔍 Monitor de acesso</span><span style="font-size:11px;color:var(--muted)" id="monitorTs"></span></div>
+      <div id="monitorList" style="padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
+    </div>
+  </div>
+
+  <!-- FINANCEIRO -->
+  <div class="page" id="pageFinanceiro">
+    <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)" id="finKpi"></div>
+    <div class="section-box" style="margin-bottom:14px">
+      <div class="section-head"><span class="section-head-title">📈 Receita mensal</span></div>
+      <div class="fin-chart" id="chartArea"></div>
+    </div>
+    <div class="section-box">
+      <div class="section-head"><span class="section-head-title">🧾 Histórico de pagamentos</span><button class="btn-ghost" onclick="openModalPag()">+ Registrar</button></div>
+      <div id="finList"></div>
+    </div>
+  </div>
+</main>
+
+<!-- MODAL NOVO CLIENTE -->
+<div class="overlay" id="overlayNovoCliente">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Novo cliente</div>
+    <div class="modal-sub">Crie o acesso para uma família</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nome da família</label><input class="form-input" type="text" id="ncNome" placeholder="Ex: Família Silva"></div>
+      <div class="form-group"><label class="form-label">Emoji</label><input class="form-input" type="text" id="ncEmoji" placeholder="🏠" maxlength="2"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Usuário de acesso</label><input class="form-input" type="text" id="ncUser" placeholder="familia.silva" autocapitalize="none"></div>
+      <div class="form-group"><label class="form-label">Senha inicial</label><input class="form-input" type="text" id="ncSenha" placeholder="senha123"></div>
+    </div>
+    <div class="form-group"><label class="form-label">WhatsApp</label><input class="form-input" type="tel" id="ncWpp" placeholder="(82) 99999-9999"></div>
+    <div class="form-group">
+      <label class="form-label">Dias de acesso inicial</label>
+      <div class="dias-picker" id="diasPicker">
+        <div class="dias-opt selected" data-d="30" onclick="selectDias(this)"><div class="dias-num">30</div><small>dias</small></div>
+        <div class="dias-opt" data-d="60" onclick="selectDias(this)"><div class="dias-num">60</div><small>dias</small></div>
+        <div class="dias-opt" data-d="90" onclick="selectDias(this)"><div class="dias-num">90</div><small>dias</small></div>
+        <div class="dias-opt" data-d="365" onclick="selectDias(this)"><div class="dias-num">365</div><small>dias</small></div>
+      </div>
+    </div>
+    <div class="info-box"><span>ℹ️</span><span>Um BIN exclusivo será criado no JSONBin para os dados desta família. O app libera acesso automaticamente ao vencer.</span></div>
+    <div id="ncErr"></div>
+    <button class="btn-save" id="btnCriarCliente" onclick="criarCliente()">Criar cliente e liberar acesso</button>
+  </div>
+</div>
+
+<!-- MODAL RENOVAR -->
+<div class="overlay" id="overlayRenovar">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="renovarTitle">Renovar acesso</div>
+    <div class="modal-sub">Estender período de acesso</div>
+    <div id="renovarStatusBox"></div>
+    <div class="form-group">
+      <label class="form-label">Adicionar dias</label>
+      <div class="dias-picker" id="renovarDiasPicker">
+        <div class="dias-opt selected" data-d="30" onclick="selectDiasR(this)"><div class="dias-num">30</div><small>dias</small></div>
+        <div class="dias-opt" data-d="60" onclick="selectDiasR(this)"><div class="dias-num">60</div><small>dias</small></div>
+        <div class="dias-opt" data-d="90" onclick="selectDiasR(this)"><div class="dias-num">90</div><small>dias</small></div>
+        <div class="dias-opt" data-d="365" onclick="selectDiasR(this)"><div class="dias-num">365</div><small>dias</small></div>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Valor cobrado (R$)</label><input class="form-input" type="number" id="renovarValor" placeholder="50.00" step="0.01" min="0"></div>
+    <div class="form-group"><label class="form-label">Observação (opcional)</label><input class="form-input" type="text" id="renovarObs" placeholder="Ex: Pix recebido"></div>
+    <button class="btn-save green" id="btnRenovar" onclick="renovarAcesso()">✅ Confirmar renovação</button>
+  </div>
+</div>
+
+<!-- MODAL DETALHE -->
+<div class="overlay" id="overlayDetalhe">
+  <div class="modal"><div class="modal-handle"></div><div id="detalheContent"></div></div>
+</div>
+
+<!-- MODAL PAGAMENTO -->
+<div class="overlay" id="overlayPag">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Registrar pagamento</div>
+    <div class="modal-sub">Registre manualmente um recebimento via WhatsApp</div>
+    <div class="form-group"><label class="form-label">Cliente</label><select class="form-input" id="pagCliente"></select></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Valor (R$)</label><input class="form-input" type="number" id="pagValor" placeholder="50.00" step="0.01" value="50"></div>
+      <div class="form-group"><label class="form-label">Data</label><input class="form-input" type="date" id="pagData"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Forma</label><select class="form-input" id="pagForma"><option>Pix</option><option>Dinheiro</option><option>Transferência</option></select></div>
+    <button class="btn-save" onclick="registrarPagamento()">Salvar pagamento</button>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const API_KEY   = '$2a$10$xx2oRBFprplf6Pr1KMJXsO.uMNy7UfOgsmXCeQffAazNfecRttOp6';
+const ADMIN_BIN = '69a50b39ae596e708f56abab';
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'admin123';
+
+// ── API ───────────────────────────────────────────────────────────────────────
+async function apiFetch(path, opts={}) {
+  const res = await fetch('https://api.jsonbin.io/v3' + path, {
+    ...opts,
+    headers: { 'Content-Type':'application/json', 'X-Master-Key':API_KEY, ...(opts.headers||{}) }
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+async function createBin(nome, data) {
+  const res = await fetch('https://api.jsonbin.io/v3/b', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'X-Master-Key':API_KEY, 'X-Bin-Name':nome, 'X-Bin-Private':'true' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error('Erro ao criar BIN: HTTP ' + res.status);
+  const d = await res.json();
+  return d.metadata.id;
+}
+
+// ── DB ────────────────────────────────────────────────────────────────────────
+let db = { clientes:[], pagamentos:[], log:[], nextId:1, nextPagId:1 };
+
+async function loadDB() {
+  setSync('busy');
+  const data = await apiFetch('/b/' + ADMIN_BIN + '/latest');
+  const r = data.record;
+  db.clientes   = r.clientes   || [];
+  db.pagamentos = r.pagamentos || [];
+  db.log        = r.log        || [];
+  db.nextId     = r.nextId     || (db.clientes.length + 1);
+  db.nextPagId  = r.nextPagId  || (db.pagamentos.length + 1);
+  setSync('ok');
+}
+
+async function saveDB() {
+  setSync('busy');
+  try {
+    await apiFetch('/b/' + ADMIN_BIN, { method:'PUT', body:JSON.stringify(db) });
+    setSync('ok');
+  } catch(e) {
+    setSync('err');
+    toast('Erro ao salvar — verifique sua conexão');
+    throw e;
+  }
+}
+
+function setSync(s) {
+  const dot = document.getElementById('syncDot');
+  const lbl = document.getElementById('syncLabel');
+  dot.className = 'sync-dot' + (s==='busy'?' busy':s==='err'?' err':'');
+  lbl.textContent = s==='busy'?'Salvando…':s==='err'?'Erro':'Sincronizado';
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('btnLogin').onclick = doLogin;
+  document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+  try {
+    await loadDB();
+  } catch(e) {
+    document.getElementById('loadingMsg').textContent = 'Erro de conexão com JSONBin';
+  }
+
+  document.getElementById('loadingScreen').classList.add('gone');
+
+  const logged = sessionStorage.getItem('casinha_admin_logged');
+  if (logged) showApp();
+  else document.getElementById('loginScreen').style.display = 'flex';
+
+  document.querySelectorAll('.overlay').forEach(o => {
+    o.addEventListener('click', e => { if(e.target===o) closeAllOverlays(); });
+  });
+});
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if (u===ADMIN_USER && p===ADMIN_PASS) {
+    sessionStorage.setItem('casinha_admin_logged','1');
+    document.getElementById('loginScreen').classList.add('gone');
+    showApp();
+  } else {
+    document.getElementById('loginErr').textContent = 'Usuário ou senha incorretos.';
+    setTimeout(() => document.getElementById('loginErr').textContent='', 2500);
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('casinha_admin_logged');
+  location.reload();
+}
+
+function showApp() {
+  document.getElementById('appHeader').style.display = '';
+  document.getElementById('appMain').style.display = '';
+  renderAll();
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+let currentTab = 'visao';
+function switchTab(t) {
+  currentTab = t;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab' + t[0].toUpperCase() + t.slice(1)).classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page' + t[0].toUpperCase() + t.slice(1)).classList.add('active');
+  renderTab(t);
+}
+
+function renderAll() { renderTab('visao'); }
+function renderTab(t) {
+  if(t==='visao') renderVisao();
+  if(t==='clientes') renderClientes('');
+  if(t==='monitor') renderMonitor();
+  if(t==='financeiro') renderFinanceiro();
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function diasRestantes(venc) {
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const v = new Date(venc + 'T00:00:00');
+  return Math.round((v - hoje) / 86400000);
+}
+function fmtData(s) { const [y,m,d]=s.split('-'); return `${d}/${m}/${y}`; }
+function fmtMoeda(v) { return 'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function getCliente(id) { return db.clientes.find(c=>c.id===id); }
+
+function statusInfo(c) {
+  const d = diasRestantes(c.vencimento);
+  if (!c.ativo || d < 0) return { label:'Bloqueado', cls:'badge-inativo', diasCls:'dias-venc', color:'#8A847C' };
+  if (d <= 7) return { label:'Vencendo', cls:'badge-vencendo', diasCls:'dias-warn', color:'#E07B39' };
+  return { label:'Ativo', cls:'badge-ativo', diasCls:'dias-ok', color:'#2A7A4B' };
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+function addLog(msg, tipo) {
+  db.log.unshift({ ts: new Date().toISOString().split('T')[0], msg, tipo });
+  if(db.log.length > 50) db.log.pop();
+}
+
+function renderRing(dias, color) {
+  const r = 27, circ = 2*Math.PI*r;
+  const pct = Math.max(0, Math.min(dias/30, 1));
+  const offset = circ*(1-pct);
+  const c = dias<=0?'var(--red)':dias<=7?'var(--orange)':'var(--green)';
+  return `<div class="ring-wrap">
+    <svg width="64" height="64" viewBox="0 0 64 64">
+      <circle class="ring-track" cx="32" cy="32" r="${r}"/>
+      <circle class="ring-fill" cx="32" cy="32" r="${r}" stroke="${c}" stroke-dasharray="${circ}" stroke-dashoffset="${offset}"/>
+    </svg>
+    <div class="ring-text"><span style="color:${c}">${Math.max(dias,0)}</span><span class="ring-sub">dias</span></div>
+  </div>`;
+}
+
+// ── VISÃO GERAL ───────────────────────────────────────────────────────────────
+function renderVisao() {
+  const hoje = new Date();
+  const ativos = db.clientes.filter(c=>c.ativo && diasRestantes(c.vencimento)>=0).length;
+  const vencendo = db.clientes.filter(c=>c.ativo && diasRestantes(c.vencimento)>=0 && diasRestantes(c.vencimento)<=7).length;
+  const bloqueados = db.clientes.filter(c=>!c.ativo || diasRestantes(c.vencimento)<0).length;
+  const receitaMes = db.pagamentos.filter(p=>{ const d=new Date(p.data); return d.getMonth()===hoje.getMonth()&&d.getFullYear()===hoje.getFullYear(); }).reduce((s,p)=>s+Number(p.valor),0);
+
+  document.getElementById('kpiGrid').innerHTML = `
+    <div class="kpi-card dark"><div class="kpi-label">Total clientes</div><div class="kpi-value">${db.clientes.length}</div><div class="kpi-sub">Meta: 40 famílias</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Ativos</div><div class="kpi-value">${ativos}</div><div class="kpi-sub">com acesso liberado</div></div>
+    <div class="kpi-card orange"><div class="kpi-label">Vencendo em 7d</div><div class="kpi-value">${vencendo}</div><div class="kpi-sub">precisam renovar</div></div>
+    <div class="kpi-card"><div class="kpi-label">Receita este mês</div><div class="kpi-value" style="font-size:18px">${fmtMoeda(receitaMes)}</div><div class="kpi-sub">${bloqueados} bloqueados</div></div>`;
+
+  const alerts = db.clientes.filter(c=>!c.ativo||diasRestantes(c.vencimento)<=7).sort((a,b)=>diasRestantes(a.vencimento)-diasRestantes(b.vencimento));
+  document.getElementById('alertList').innerHTML = alerts.length
+    ? alerts.map(c=>clienteRow(c,true)).join('')
+    : '<div style="padding:28px;text-align:center;font-size:13px;color:var(--muted)">✅ Todos os clientes estão em dia!</div>';
+
+  document.getElementById('activityList').innerHTML = db.log.slice(0,5).map(l=>`
+    <div class="fin-row">
+      <div class="fin-dot" style="background:${l.tipo==='bloqueio'?'var(--red)':l.tipo==='renovar'?'var(--green)':l.tipo==='novo'?'var(--blue)':'var(--green)'}"></div>
+      <div class="fin-client"><div class="fin-client-name">${l.tipo==='novo'?'✨':l.tipo==='renovar'?'🔄':l.tipo==='bloqueio'?'🔒':'✅'} ${l.msg}</div><div class="fin-client-date">${fmtData(l.ts)}</div></div>
+    </div>`).join('') || '<div style="padding:24px;text-align:center;font-size:13px;color:var(--muted)">Nenhuma atividade ainda</div>';
+}
+
+// ── CLIENTES ──────────────────────────────────────────────────────────────────
+function renderClientes(filter) {
+  const f = filter.toLowerCase();
+  const list = db.clientes.filter(c=>!f||c.nome.toLowerCase().includes(f)||c.user.toLowerCase().includes(f));
+  document.getElementById('clientesList').innerHTML = list.length
+    ? list.map(c=>clienteRow(c,false)).join('')
+    : '<div style="padding:28px;text-align:center;font-size:13px;color:var(--muted)">Nenhum cliente encontrado</div>';
+}
+
+function clienteRow(c, compact) {
+  const d = diasRestantes(c.vencimento);
+  const s = statusInfo(c);
+  const prog = Math.max(0,Math.min(d/30,1))*100;
+  const progColor = d<=0?'var(--red)':d<=7?'var(--orange)':'var(--green)';
+  return `<div class="client-item">
+    <div class="client-avatar">${c.emoji||'🏠'}</div>
+    <div class="client-info">
+      <div class="client-name">${c.nome}</div>
+      <div class="client-meta">
+        <span>${c.user}</span>·
+        <span class="badge ${s.cls}">${s.label}</span>·
+        <span>vence ${fmtData(c.vencimento)}</span>
+      </div>
+    </div>
+    <div class="client-right">
+      <div class="mini-prog"><div class="mini-prog-bar" style="width:${prog}%;background:${progColor}"></div></div>
+      <span class="dias-badge ${s.diasCls}">${d>=0?d+'d':Math.abs(d)+'d atr'}</span>
+      ${!compact
+        ? `<button class="action-btn renovar" onclick="openRenovar(${c.id})">🔄</button>
+           <button class="action-btn ver" onclick="openDetalhe(${c.id})">👁</button>`
+        : `<button class="action-btn renovar" onclick="openRenovar(${c.id})">🔄 Renovar</button>`}
+    </div>
+  </div>`;
+}
+
+function filterClientes(v) { renderClientes(v); }
+
+// ── MONITOR ───────────────────────────────────────────────────────────────────
+function renderMonitor() {
+  document.getElementById('monitorTs').textContent = 'Atualizado: ' + new Date().toLocaleString('pt-BR');
+  document.getElementById('monitorList').innerHTML = db.clientes.map(c=>{
+    const d = diasRestantes(c.vencimento);
+    const s = statusInfo(c);
+    return `<div class="monitor-card" onclick="openDetalhe(${c.id})">
+      <div class="monitor-icon" style="background:${d<=0?'var(--red-light)':d<=7?'var(--orange-light)':'var(--green-light)'}">${c.emoji||'🏠'}</div>
+      <div class="monitor-info"><div class="monitor-name">${c.nome}</div><div class="monitor-detail"><span class="badge ${s.cls}">${s.label}</span></div></div>
+      <div class="monitor-right">${renderRing(d,s.color)}</div>
+    </div>`;
+  }).join('') || '<div style="padding:28px;text-align:center;font-size:13px;color:var(--muted)">Nenhum cliente cadastrado</div>';
+}
+
+// ── FINANCEIRO ────────────────────────────────────────────────────────────────
+function renderFinanceiro() {
+  const hoje = new Date();
+  const receitaMes = db.pagamentos.filter(p=>{ const d=new Date(p.data); return d.getMonth()===hoje.getMonth()&&d.getFullYear()===hoje.getFullYear(); }).reduce((s,p)=>s+Number(p.valor),0);
+  const receitaTotal = db.pagamentos.reduce((s,p)=>s+Number(p.valor),0);
+
+  document.getElementById('finKpi').innerHTML = `
+    <div class="kpi-card dark"><div class="kpi-label">Receita este mês</div><div class="kpi-value" style="font-size:20px">${fmtMoeda(receitaMes)}</div><div class="kpi-sub">Meta: ${fmtMoeda(40*50)}/mês</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Total recebido</div><div class="kpi-value" style="font-size:20px">${fmtMoeda(receitaTotal)}</div><div class="kpi-sub">${db.pagamentos.length} pagamentos</div></div>
+    <div class="kpi-card"><div class="kpi-label">Ticket médio</div><div class="kpi-value" style="font-size:20px">${fmtMoeda(db.pagamentos.length?receitaTotal/db.pagamentos.length:0)}</div><div class="kpi-sub">por pagamento</div></div>`;
+
+  const meses = [];
+  for(let i=5;i>=0;i--) {
+    const d = new Date(hoje.getFullYear(),hoje.getMonth()-i,1);
+    const total = db.pagamentos.filter(p=>{const pd=new Date(p.data);return pd.getMonth()===d.getMonth()&&pd.getFullYear()===d.getFullYear();}).reduce((s,p)=>s+Number(p.valor),0);
+    meses.push({ label:d.toLocaleString('pt-BR',{month:'short'}), total, current:i===0 });
+  }
+  const maxVal = Math.max(...meses.map(m=>m.total),1);
+  document.getElementById('chartArea').innerHTML = `<div class="month-bars">${meses.map(m=>`
+    <div class="month-bar-wrap">
+      <div class="month-bar ${m.current?'current':'past'}" style="height:${Math.max(m.total/maxVal*72,4)}px" data-val="${fmtMoeda(m.total)}"></div>
+      <span class="month-label">${m.label}</span>
+    </div>`).join('')}</div>`;
+
+  document.getElementById('finList').innerHTML = [...db.pagamentos].sort((a,b)=>new Date(b.data)-new Date(a.data)).map(p=>{
+    const c = getCliente(p.clienteId);
+    return `<div class="fin-row">
+      <div class="fin-dot" style="background:var(--green)"></div>
+      <div class="fin-client"><div class="fin-client-name">${c?c.emoji+' '+c.nome:'Cliente'}</div><div class="fin-client-date">${fmtData(p.data)} · ${p.forma}${p.obs?' · '+p.obs:''}</div></div>
+      <div class="fin-valor">${fmtMoeda(p.valor)}</div>
+      <span style="font-size:11px;font-weight:600;color:var(--green)">✅</span>
+    </div>`;
+  }).join('') || '<div style="padding:24px;text-align:center;font-size:13px;color:var(--muted)">Nenhum pagamento registrado</div>';
+}
+
+// ── MODAL NOVO CLIENTE ────────────────────────────────────────────────────────
+let selectedDias = 30;
+
+function openModalNovoCliente() {
+  selectedDias = 30;
+  ['ncNome','ncUser','ncSenha','ncWpp'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ncEmoji').value='🏠';
+  document.getElementById('ncErr').innerHTML='';
+  document.querySelectorAll('#diasPicker .dias-opt').forEach(o=>o.classList.toggle('selected',o.dataset.d==='30'));
+  document.getElementById('btnCriarCliente').disabled=false;
+  document.getElementById('btnCriarCliente').textContent='Criar cliente e liberar acesso';
+  openOverlay('overlayNovoCliente');
+}
+
+function selectDias(el) {
+  selectedDias = parseInt(el.dataset.d);
+  document.querySelectorAll('#diasPicker .dias-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+async function criarCliente() {
+  const nome  = document.getElementById('ncNome').value.trim();
+  const user  = document.getElementById('ncUser').value.trim().toLowerCase();
+  const senha = document.getElementById('ncSenha').value.trim();
+  const emoji = document.getElementById('ncEmoji').value.trim()||'🏠';
+  const wpp   = document.getElementById('ncWpp').value.trim();
+
+  if(!nome||!user||!senha) { document.getElementById('ncErr').innerHTML='<div class="warn-box"><span>⚠️</span><span>Preencha nome, usuário e senha</span></div>'; return; }
+  if(db.clientes.find(c=>c.user===user)) { document.getElementById('ncErr').innerHTML='<div class="err-box"><span>❌</span><span>Usuário já existe</span></div>'; return; }
+
+  const btn = document.getElementById('btnCriarCliente');
+  btn.disabled=true; btn.textContent='Criando BIN…';
+
+  try {
+    // Criar BIN exclusivo para esta família
+    const binId = await createBin('casinha-'+user, { lancamentos:[], metas:{}, members:[], cartoes:[], customCats:[], lembretes:[] });
+
+    const venc = new Date(); venc.setDate(venc.getDate()+selectedDias);
+    const c = { id:db.nextId++, nome, emoji, user, senha, wpp, binId, vencimento:venc.toISOString().split('T')[0], ativo:true, criado:new Date().toISOString().split('T')[0] };
+    db.clientes.push(c);
+    addLog(`${emoji} ${nome} criado — ${selectedDias} dias`, 'novo');
+    await saveDB();
+    closeAllOverlays();
+    renderTab(currentTab);
+    toast(`✨ ${nome} criado! BIN: ${binId}`);
+  } catch(e) {
+    document.getElementById('ncErr').innerHTML=`<div class="err-box"><span>❌</span><span>Erro ao criar: ${e.message}</span></div>`;
+    btn.disabled=false; btn.textContent='Criar cliente e liberar acesso';
+  }
+}
+
+// ── MODAL RENOVAR ─────────────────────────────────────────────────────────────
+let renovarId=null, selectedDiasR=30;
+
+function openRenovar(id) {
+  renovarId=id; selectedDiasR=30;
+  const c = getCliente(id);
+  const d = diasRestantes(c.vencimento);
+  document.getElementById('renovarTitle').textContent=`Renovar — ${c.emoji||'🏠'} ${c.nome}`;
+  document.getElementById('renovarValor').value='50';
+  document.getElementById('renovarObs').value='';
+  document.querySelectorAll('#renovarDiasPicker .dias-opt').forEach(o=>o.classList.toggle('selected',o.dataset.d==='30'));
+  document.getElementById('btnRenovar').disabled=false;
+  document.getElementById('btnRenovar').textContent='✅ Confirmar renovação';
+
+  let statusHtml='';
+  if(!c.ativo||d<0) statusHtml=`<div class="warn-box"><span>⚠️</span><span>Cliente <strong>bloqueado</strong>. Renovar vai liberar o acesso imediatamente.</span></div>`;
+  else if(d<=7) statusHtml=`<div class="warn-box"><span>⏳</span><span>Restam apenas <strong>${d} dias</strong>.</span></div>`;
+  document.getElementById('renovarStatusBox').innerHTML=statusHtml;
+  openOverlay('overlayRenovar');
+}
+
+function selectDiasR(el) {
+  selectedDiasR=parseInt(el.dataset.d);
+  document.querySelectorAll('#renovarDiasPicker .dias-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+async function renovarAcesso() {
+  const c = getCliente(renovarId);
+  const valor = parseFloat(document.getElementById('renovarValor').value)||0;
+  const obs = document.getElementById('renovarObs').value.trim();
+  const btn = document.getElementById('btnRenovar');
+  btn.disabled=true; btn.textContent='Salvando…';
+
+  const d = diasRestantes(c.vencimento);
+  let base = d<=0 ? new Date() : new Date(c.vencimento+'T00:00:00');
+  base.setDate(base.getDate()+selectedDiasR);
+  c.vencimento = base.toISOString().split('T')[0];
+  c.ativo = true;
+
+  if(valor>0) db.pagamentos.push({ id:db.nextPagId++, clienteId:c.id, valor, data:new Date().toISOString().split('T')[0], forma:'Pix', obs });
+  addLog(`${c.emoji||'🏠'} ${c.nome} renovou por +${selectedDiasR} dias`, 'renovar');
+
+  try {
+    await saveDB();
+    closeAllOverlays();
+    renderTab(currentTab);
+    toast(`🔄 Acesso de ${c.nome} renovado!`);
+  } catch(e) {
+    btn.disabled=false; btn.textContent='✅ Confirmar renovação';
+  }
+}
+
+// ── MODAL DETALHE ─────────────────────────────────────────────────────────────
+function openDetalhe(id) {
+  const c = getCliente(id);
+  const d = diasRestantes(c.vencimento);
+  const s = statusInfo(c);
+  const pags = db.pagamentos.filter(p=>p.clienteId===id);
+  const totalPago = pags.reduce((s,p)=>s+Number(p.valor),0);
+
+  document.getElementById('detalheContent').innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+      ${renderRing(d,s.color)}
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:22px;">${c.emoji||'🏠'} ${c.nome}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px;"><span class="badge ${s.cls}">${s.label}</span> · vence ${fmtData(c.vencimento)}</div>
+      </div>
+    </div>
+    <div class="detail-row"><span class="detail-label">Usuário</span><span class="detail-value">${c.user}</span></div>
+    <div class="detail-row"><span class="detail-label">Senha</span><span class="detail-value" style="font-family:monospace">${c.senha}</span></div>
+    <div class="detail-row"><span class="detail-label">BIN ID</span><span class="detail-value" style="font-size:11px;font-family:monospace">${c.binId||'—'}</span></div>
+    <div class="detail-row"><span class="detail-label">WhatsApp</span><span class="detail-value">${c.wpp||'—'}</span></div>
+    <div class="detail-row"><span class="detail-label">Total pago</span><span class="detail-value">${fmtMoeda(totalPago)}</span></div>
+    <div class="detail-row"><span class="detail-label">Criado em</span><span class="detail-value">${c.criado?fmtData(c.criado):'—'}</span></div>
+    <div style="display:flex;gap:8px;margin-top:18px;">
+      <button class="btn-primary" style="flex:1" onclick="closeAllOverlays();openRenovar(${c.id})">🔄 Renovar acesso</button>
+      ${c.ativo?`<button class="btn-ghost" onclick="toggleBloqueio(${c.id},false)">🔒 Bloquear</button>`:`<button class="btn-ghost" onclick="toggleBloqueio(${c.id},true)">🔓 Desbloquear</button>`}
+    </div>`;
+  openOverlay('overlayDetalhe');
+}
+
+async function toggleBloqueio(id, ativar) {
+  const c = getCliente(id); c.ativo = ativar;
+  addLog(`${c.emoji||'🏠'} ${c.nome} foi ${ativar?'desbloqueado':'bloqueado'}`, ativar?'ok':'bloqueio');
+  try { await saveDB(); closeAllOverlays(); renderTab(currentTab); toast(ativar?'🔓 Desbloqueado':'🔒 Bloqueado'); } catch(e) {}
+}
+
+// ── MODAL PAGAMENTO ───────────────────────────────────────────────────────────
+function openModalPag() {
+  document.getElementById('pagCliente').innerHTML = db.clientes.map(c=>`<option value="${c.id}">${c.emoji||'🏠'} ${c.nome}</option>`).join('');
+  document.getElementById('pagData').value = new Date().toISOString().split('T')[0];
+  document.getElementById('pagValor').value = '50';
+  openOverlay('overlayPag');
+}
+
+async function registrarPagamento() {
+  const clienteId = parseInt(document.getElementById('pagCliente').value);
+  const valor = parseFloat(document.getElementById('pagValor').value)||0;
+  const data = document.getElementById('pagData').value;
+  const forma = document.getElementById('pagForma').value;
+  if(!valor||!data) { toast('Preencha valor e data'); return; }
+  const c = getCliente(clienteId);
+  db.pagamentos.push({ id:db.nextPagId++, clienteId, valor, data, forma, obs:'' });
+  addLog(`${c.emoji||'🏠'} ${c.nome} — ${fmtMoeda(valor)} registrado`, 'ok');
+  try { await saveDB(); closeAllOverlays(); renderTab(currentTab); toast('💰 Pagamento registrado!'); } catch(e) {}
+}
+
+// ── OVERLAYS ──────────────────────────────────────────────────────────────────
+function openOverlay(id) { document.getElementById(id).classList.add('open'); }
+function closeAllOverlays() { document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('open')); }
+
+// ── EXPORT CSV ────────────────────────────────────────────────────────────────
+function exportCSV() {
+  const rows = [['Nome','Usuário','BIN ID','Status','Vencimento','Dias restantes','Total pago']];
+  db.clientes.forEach(c=>{
+    const d=diasRestantes(c.vencimento);
+    const s=statusInfo(c);
+    const tp=db.pagamentos.filter(p=>p.clienteId===c.id).reduce((s,p)=>s+Number(p.valor),0);
+    rows.push([c.nome,c.user,c.binId||'',s.label,fmtData(c.vencimento),d,tp.toFixed(2)]);
+  });
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='casinha_clientes.csv';
+  a.click();
+  toast('📥 CSV exportado!');
+}
+</script>
+</body>
+</html>
