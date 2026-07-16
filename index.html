@@ -353,6 +353,7 @@
     </div>
     <button class="btn-icon" id="exportBtn" title="Exportar CSV">⬇</button>
     <button class="btn-icon" id="settingsBtn" title="Configurações">⚙</button>
+    <button class="btn-icon" id="logoutBtn" title="Sair da conta" onclick="if(confirm('Sair da conta?'))logout()">⏻</button>
   </div>
 </header>
 
@@ -632,9 +633,25 @@ async function loadData() {
   lembretes = d.record.lembretes || [];
 }
 
+const _tombstones = new Set(); // ids apagados NESTA sessão — pro merge não ressuscitar exclusão
 async function persist() {
   setSync('busy');
   try {
+    // 🛟 backup local automático antes de salvar (últimos 5, por aparelho)
+    try {
+      const b = JSON.parse(localStorage.getItem('casinha_bkp') || '[]');
+      b.unshift({ em: new Date().toISOString(), dados: { lancamentos, metas, members, cartoes, customCats, lembretes } });
+      localStorage.setItem('casinha_bkp', JSON.stringify(b.slice(0, 5)));
+    } catch(e) {}
+    // 🤝 merge anti-perda: se outra pessoa salvou enquanto isso, junta em vez de sobrescrever
+    try {
+      const remoto = (await apiFetch('/b/' + currentAccount.binId + '/latest')).record || {};
+      const locais = new Set(lancamentos.map(l => String(l.id)));
+      (remoto.lancamentos || []).forEach(r => {
+        const id = String(r.id);
+        if (!locais.has(id) && !_tombstones.has(id)) lancamentos.push(r);
+      });
+    } catch(e) {} // sem rede pro merge → segue com o local (comportamento antigo)
     await apiFetch('/b/' + currentAccount.binId, {
       method: 'PUT',
       body: JSON.stringify({ lancamentos, metas, members, cartoes, customCats, lembretes })
@@ -645,6 +662,14 @@ async function persist() {
     showToast('Erro ao salvar — verifique sua conexão');
     throw e;
   }
+}
+function restaurarBackup(i) { // 🛟 volta um snapshot local (via console ou suporte)
+  try {
+    const b = JSON.parse(localStorage.getItem('casinha_bkp') || '[]')[i];
+    if (!b) return showToast('Backup não encontrado');
+    ({ lancamentos, metas, members, cartoes, customCats, lembretes } = { lancamentos: b.dados.lancamentos||[], metas: b.dados.metas||{}, members: b.dados.members||members, cartoes: b.dados.cartoes||cartoes, customCats: b.dados.customCats||[], lembretes: b.dados.lembretes||[] });
+    persist(); renderAll(); showToast('🛟 Backup de ' + new Date(b.em).toLocaleString('pt-BR') + ' restaurado');
+  } catch(e) { showToast('Erro ao restaurar'); }
 }
 
 function setSync(s) {
@@ -920,6 +945,7 @@ function renderLista(items) {
         }
 
         const pessoaBadge = l.pessoa ? `<span class="badge-pessoa">${esc(l.pessoa)}</span>` : '';
+        const traderBadge = (String(l.id).startsWith('gt_') || l.origem==='geff-trader') ? `<span class="badge-cartao" title="veio automático do Geff Trader">⚡ Trader</span>` : '';
         const cartaoBadge = l.cartao ? `<span class="badge-cartao">💳 ${esc(l.cartao)}</span>` : '';
         const vencBadge = vencimentoHTML(l);
 
@@ -929,7 +955,7 @@ function renderLista(items) {
             <div class="entry-desc">${esc(l.descricao)}</div>
             <div class="entry-meta">
               <span>${c.nome} · ${ds}</span>
-              ${pessoaBadge}${cartaoBadge}${statusBadge}${vencBadge}
+              ${pessoaBadge}${traderBadge}${cartaoBadge}${statusBadge}${vencBadge}
             </div>
           </div>
           <div class="entry-val">${fmt(l.valor)}</div>
@@ -1165,6 +1191,7 @@ async function salvar() {
 async function deletar(id) {
   if (!confirm('Excluir este lançamento?')) return;
   const prev = [...lancamentos];
+  _tombstones.add(String(id));
   lancamentos = lancamentos.filter(l=>l.id!==id);
   try { await persist(); render(); showToast('Lançamento excluído'); }
   catch(e) { lancamentos=prev; render(); }
