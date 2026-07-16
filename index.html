@@ -1165,7 +1165,9 @@ async function salvar() {
     cartao: selCartao,
     status: selStatus,
     vencimento: selStatus === 'pendente' ? venc : null,
-    criadoEm: editId ? (lancamentos.find(l=>l.id===editId)||{}).criadoEm : new Date().toISOString()
+    criadoEm: editId ? (lancamentos.find(l=>l.id===editId)||{}).criadoEm : new Date().toISOString(),
+    origem: editId ? (lancamentos.find(l=>l.id===editId)||{}).origem : undefined,
+    editadoEm: new Date().toISOString()
   };
 
   const prev = [...lancamentos];
@@ -1202,6 +1204,7 @@ async function toggleStatus(id) {
   if (!l) return;
   l.status = l.status==='pago' ? 'pendente' : 'pago';
   if (l.status === 'pago') l.vencimento = null;
+  l.editadoEm = new Date().toISOString();
   try { await persist(); render(); showToast(l.status==='pago'?'Marcado como pago ✓':'Marcado como pendente'); }
   catch(e) { l.status = l.status==='pago'?'pendente':'pago'; render(); }
 }
