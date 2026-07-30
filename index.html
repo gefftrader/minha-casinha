@@ -131,6 +131,82 @@
   .contrib-value { font-family: 'Playfair Display', serif; font-size: 15px; letter-spacing: -0.3px; line-height: 1.2; margin-top: 1px; }
   .contrib-pct { font-size: 10px; color: var(--muted); margin-top: 1px; }
 
+  /* ── PARCELAS: CHIP DE PROGRESSO ── */
+  .parc-chip { display: inline-flex; align-items: center; gap: 5px; background: var(--accent-light); color: var(--accent); border-radius: 99px; padding: 2px 8px; font-size: 10px; font-weight: 700; white-space: nowrap; letter-spacing: 0.2px; }
+  .parc-chip .pc-bar { width: 26px; height: 4px; background: rgba(200,82,42,0.2); border-radius: 99px; overflow: hidden; flex-shrink: 0; }
+  .parc-chip .pc-bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.5s cubic-bezier(0.16,1,0.3,1); }
+  .parc-chip.full { background: var(--green-light); color: var(--green); }
+  .parc-chip.full .pc-bar { background: rgba(42,122,75,0.18); }
+  .parc-chip.full .pc-bar i { background: var(--green); }
+
+  /* ── PARCELAS: VIEW DO MÊS ── */
+  .parc-box { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 14px; }
+  .parc-box-header { padding: 14px 18px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .parc-box-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .parc-box-total { font-family: 'Playfair Display', serif; font-size: 19px; letter-spacing: -0.5px; text-align: right; }
+  .parc-box-total span { display: block; font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.7px; }
+
+  .parc-item { padding: 12px 18px 13px; border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  .parc-item:last-child { border-bottom: none; }
+  .parc-item:hover { background: var(--bg); }
+  .parc-item.quitada { background: var(--green-light); }
+  .parc-item-top { display: flex; align-items: center; gap: 11px; }
+  .parc-item-info { flex: 1; min-width: 0; }
+  .parc-item-desc { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .parc-item-right { text-align: right; flex-shrink: 0; }
+  .parc-item-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .parc-item-foot { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 10.5px; color: var(--muted); flex-wrap: wrap; }
+  .parc-item-foot b { color: var(--text); font-weight: 600; }
+
+  .parc-bar { height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; margin-top: 9px; }
+  .parc-bar i { display: block; height: 100%; border-radius: 99px; transition: width 0.5s cubic-bezier(0.16,1,0.3,1); }
+  .parc-seg { display: flex; gap: 3px; margin-top: 9px; }
+  .parc-seg span { flex: 1; height: 6px; background: var(--surface2); border-radius: 99px; transition: background 0.3s; }
+  .parc-seg span.on { background: var(--accent); }
+  .parc-seg span.pg { background: var(--green); }
+
+  /* ── PARCELAS: PAINEL LIBERDADE ── */
+  .parc-free { background: var(--text); color: white; border-radius: 16px; padding: 16px 18px; margin-bottom: 14px; }
+  .parc-free-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .parc-free-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.9px; color: #C8A882; }
+  .parc-free-month { font-family: 'Playfair Display', serif; font-size: 24px; letter-spacing: -0.5px; line-height: 1.15; margin-top: 3px; }
+  .parc-free-sub { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 4px; line-height: 1.5; }
+  .parc-free-icon { font-size: 26px; line-height: 1; }
+  .parc-timeline { display: flex; align-items: flex-end; gap: 5px; margin-top: 16px; overflow-x: auto; padding-bottom: 2px; }
+  .tl-col { flex: 1 0 26px; min-width: 26px; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .tl-bar-wrap { width: 100%; height: 62px; display: flex; align-items: flex-end; }
+  .tl-bar { width: 100%; background: rgba(255,255,255,0.16); border-radius: 5px 5px 2px 2px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; min-height: 3px; transition: height 0.5s cubic-bezier(0.16,1,0.3,1); }
+  .tl-bar i { display: block; width: 100%; background: rgba(136,221,170,0.75); }
+  .tl-col.free .tl-bar { background: rgba(136,221,170,0.28); }
+  .tl-col.now .tl-bar { background: #C8A882; }
+  .tl-lbl { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; }
+  .tl-col.now .tl-lbl { color: #C8A882; }
+  .tl-col.free .tl-lbl { color: rgba(136,221,170,0.9); }
+  .parc-free-legend { font-size: 9.5px; color: rgba(255,255,255,0.35); margin-top: 8px; }
+  .parc-free-list { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.12); display: flex; flex-direction: column; gap: 9px; }
+  .parc-free-row { display: flex; align-items: center; gap: 9px; font-size: 12px; }
+  .parc-free-row .pfr-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .parc-free-row .pfr-end { font-size: 10px; color: rgba(255,255,255,0.5); white-space: nowrap; }
+  .parc-free-row .parc-chip { background: rgba(255,255,255,0.12); color: white; }
+  .parc-free-row .parc-chip .pc-bar { background: rgba(255,255,255,0.2); }
+  .parc-free-row .parc-chip .pc-bar i { background: #C8A882; }
+
+  /* ── PARCELAS: FORM ── */
+  .parc-switch-row { display: flex; align-items: center; gap: 11px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 13px; cursor: pointer; transition: all 0.15s; }
+  .parc-switch-row.on { border-color: var(--accent); background: var(--accent-light); }
+  .parc-switch { width: 38px; height: 22px; border-radius: 99px; background: var(--border); flex-shrink: 0; position: relative; transition: background 0.2s; }
+  .parc-switch i { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: white; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .parc-switch-row.on .parc-switch { background: var(--accent); }
+  .parc-switch-row.on .parc-switch i { transform: translateX(16px); }
+  .parc-switch-txt { font-size: 13.5px; font-weight: 500; }
+  .parc-switch-hint { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .parc-fields { margin-top: 12px; }
+  .parc-check { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; color: var(--text); cursor: pointer; line-height: 1.45; margin-bottom: 10px; }
+  .parc-check input { width: 17px; height: 17px; accent-color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+  .parc-check span { color: var(--muted); }
+  .parc-preview { background: var(--bg); border: 1px dashed var(--border); border-radius: 10px; padding: 10px 12px; font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: 7px; flex-wrap: wrap; line-height: 1.6; }
+  .parc-preview b { color: var(--text); font-weight: 600; }
+
   /* EMPTY */
   .empty-state { padding: 36px 20px; text-align: center; color: var(--muted); }
   .empty-state .ei { font-size: 32px; margin-bottom: 8px; }
@@ -305,6 +381,15 @@
     .summary-card:first-child { grid-column: 1 / -1; }
     .cat-name { width: 75px; }
     .cat-picker { grid-template-columns: repeat(3, 1fr); }
+    .period-bar { flex-wrap: wrap; gap: 10px; }
+    .view-toggle { width: 100%; }
+    .view-toggle button { flex: 1; padding: 6px 4px; font-size: 11px; }
+  }
+
+  /* Em telas de toque não existe hover: ações sempre visíveis */
+  @media (hover: none) {
+    .entry-actions { opacity: 1; }
+    .lem-actions { opacity: 1; }
   }
 </style>
 </head>
@@ -367,6 +452,7 @@
     <div class="view-toggle">
       <button class="active" id="btnLista" onclick="setView('lista')">Lista</button>
       <button id="btnCat" onclick="setView('categorias')">Categorias</button>
+      <button id="btnParc" onclick="setView('parcelas')">Parcelas</button>
     </div>
   </div>
 
@@ -464,8 +550,41 @@
       </div>
     </div>
 
+    <!-- Parcelamento -->
     <div class="form-group">
-      <label class="form-label">Status</label>
+      <label class="form-label">Parcelamento <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">(opcional)</span></label>
+      <div class="parc-switch-row" id="parcSwitchRow" onclick="toggleParcelado()">
+        <div class="parc-switch"><i></i></div>
+        <div>
+          <div class="parc-switch-txt">🔁 Conta parcelada / recorrente</div>
+          <div class="parc-switch-hint">Ex: sofá em 10x, seguro em 12x…</div>
+        </div>
+      </div>
+      <div class="parc-fields" id="parcFields" style="display:none;">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Parcela atual</label>
+            <input class="form-input" type="number" id="fParcNum" min="1" step="1" value="1" inputmode="numeric">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Total de parcelas</label>
+            <input class="form-input" type="number" id="fParcTotal" min="2" step="1" placeholder="10" inputmode="numeric">
+          </div>
+        </div>
+        <label class="parc-check" id="parcGerarRow">
+          <input type="checkbox" id="fParcGerar" checked>
+          <span>Lançar automaticamente as parcelas seguintes, uma em cada mês <b>(recomendado)</b></span>
+        </label>
+        <label class="parc-check" id="parcAplicarRow" style="display:none;">
+          <input type="checkbox" id="fParcAplicar">
+          <span>Aplicar valor, descrição e categoria também nas <b>parcelas ainda não pagas</b></span>
+        </label>
+        <div class="parc-preview" id="parcPreview"></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Status <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0" id="statusHint"></span></label>
       <div class="status-picker">
         <div class="status-opt" data-status="pago" onclick="selectStatus('pago')">✅ Pago</div>
         <div class="status-opt" data-status="pendente" onclick="selectStatus('pendente')">⏳ Pendente</div>
@@ -596,6 +715,10 @@ let filtro = 'todos';
 let editId = null;
 let currentAccount = null;
 let selEmojiCustom = '📌';
+let parcelado = false; // 🔁 lançamento em edição/criação é parcelado?
+
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MESES_ABREV = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
 const PALETTE = ['#4A6FA5','#E07B39','#6B4FA5','#2A9D8F','#C7A93B','#E76F51','#8A847C','#D63B3B','#3B6FD6','#2A7A4B','#C8522A','#8B5CF6'];
 const BASE_CATS = [
@@ -810,6 +933,11 @@ async function startApp(acc) {
   document.getElementById('exportBtn').onclick = exportCSV;
   document.getElementById('settingsBtn').onclick = openSettings;
   document.getElementById('lemTitulo').addEventListener('keydown', e => { if(e.key==='Enter') addLembrete(); });
+
+  // 🔁 prévia do parcelamento reage a valor/data/parcelas
+  ['fValor','fData','fVenc','fParcNum','fParcTotal'].forEach(id =>
+    document.getElementById(id).addEventListener('input', updateParcPreview)
+  );
 })();
 
 // ─── FILTER BAR ────────────────────────────────────────────────────────────
@@ -822,8 +950,267 @@ function buildFilterBar() {
     <div class="filter-chip active" data-filter="todos" onclick="setFilter('todos')">Todos</div>
     <div class="filter-chip" data-filter="pendente" onclick="setFilter('pendente')">⏳ Pendentes</div>
     <div class="filter-chip" data-filter="pago" onclick="setFilter('pago')">✅ Pagos</div>
+    <div class="filter-chip" data-filter="parceladas" onclick="setFilter('parceladas')">🔁 Parceladas</div>
     ${memberChips}
   `;
+}
+
+// ─── PARCELAS 🔁 ───────────────────────────────────────────────────────────
+// Um lançamento parcelado guarda: parcela = { num, total, grupoId }.
+// Cada parcela é um lançamento próprio (um por mês), todas com o mesmo grupoId.
+
+function isParcelada(l) { return !!(l.parcela && l.parcela.total > 1); }
+
+// Soma meses a uma data ISO (aaaa-mm-dd), respeitando fim de mês (31/jan +1 = 28/fev)
+function addMeses(iso, n) {
+  if (!iso) return null;
+  const [y, m, d] = String(iso).split('-').map(Number);
+  const alvo = new Date(y, (m - 1) + n, 1);
+  const ultimoDia = new Date(alvo.getFullYear(), alvo.getMonth() + 1, 0).getDate();
+  alvo.setDate(Math.min(d || 1, ultimoDia));
+  return alvo.getFullYear() + '-' + String(alvo.getMonth()+1).padStart(2,'0') + '-' + String(alvo.getDate()).padStart(2,'0');
+}
+function mesKey(iso) { return String(iso || '').slice(0, 7); }                 // 'aaaa-mm'
+function mesKeyDe(y, m) { return y + '-' + String(m+1).padStart(2,'0'); }
+function mesKeyAdd(mk, n) {
+  const [y, m] = mk.split('-').map(Number);
+  const d = new Date(y, (m - 1) + n, 1);
+  return mesKeyDe(d.getFullYear(), d.getMonth());
+}
+function mesLabel(mk, curto) {
+  const [y, m] = mk.split('-').map(Number);
+  return curto ? MESES_ABREV[m-1] + '/' + String(y).slice(2) : MESES[m-1] + ' ' + y;
+}
+
+// Agrupa as parcelas por grupoId e projeta as que ainda não foram lançadas
+function parcelaGrupos() {
+  const map = new Map();
+  lancamentos.forEach(l => {
+    if (!isParcelada(l)) return;
+    const key = l.parcela.grupoId || ('solo_' + l.id);
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(l);
+  });
+
+  const grupos = [];
+  map.forEach((itens, key) => {
+    itens.sort((a,b) => (a.parcela.num||1) - (b.parcela.num||1));
+    const ref = itens[itens.length - 1];                                  // parcela mais avançada já lançada
+    const total = itens.reduce((m,i) => Math.max(m, i.parcela.total||1), 1);
+    const primeiro = itens[0];
+    const numPrimeiro = primeiro.parcela.num || 1;
+    const mesUm = addMeses(primeiro.data, -(numPrimeiro - 1));             // mês da 1ª parcela
+
+    const linha = [];
+    let pagas = 0, valorRestante = 0, valorTotal = 0;
+    for (let k = 1; k <= total; k++) {
+      const real = itens.find(i => (i.parcela.num||1) === k) || null;
+      const mk = mesKey(real ? real.data : addMeses(mesUm, k - 1));
+      const valor = real ? real.valor : ref.valor;                        // projeção usa o último valor conhecido
+      // parcela não lançada e anterior à primeira lançada = passado, conta como quitada
+      const pago = real ? real.status === 'pago' : k < numPrimeiro;
+      if (pago) pagas++; else valorRestante += valor;
+      valorTotal += valor;
+      linha.push({ num: k, mes: mk, valor, pago, real });
+    }
+    const abertas = linha.filter(p => !p.pago);
+
+    grupos.push({
+      id: key, descricao: ref.descricao, categoria: ref.categoria, cartao: ref.cartao,
+      total, pagas, restantes: total - pagas,
+      valor: ref.valor, valorTotal, valorRestante,
+      linha, mesUm,
+      fimMes: linha[linha.length-1].mes,
+      fimAbertoMes: abertas.length ? abertas[abertas.length-1].mes : null,
+      lancadas: itens.length
+    });
+  });
+  return grupos.sort((a,b) => String(a.fimAbertoMes||a.fimMes).localeCompare(String(b.fimAbertoMes||b.fimMes)));
+}
+
+// Chip "3/10" com mini barra de progresso
+function parcelaChipHTML(l) {
+  if (!isParcelada(l)) return '';
+  const num = l.parcela.num || 1, total = l.parcela.total;
+  const pct = Math.max(6, Math.min(100, num / total * 100));
+  const ultima = num >= total;
+  return `<span class="parc-chip${ultima?' full':''}" title="Parcela ${num} de ${total}">🔁 ${num}/${total}<span class="pc-bar"><i style="width:${pct}%"></i></span></span>`;
+}
+
+// Barra do card: segmentada até 12 parcelas, contínua acima disso.
+// Verde = parcela paga · laranja = já chegou (mês atual ou anterior) · cinza = futura
+function parcBarHTML(g, cor, numAtual) {
+  if (!g) return '';
+  if (g.total <= 12) {
+    return '<div class="parc-seg">' + g.linha.map(p =>
+      `<span class="${p.pago ? 'pg' : (p.num <= numAtual ? 'on' : '')}" title="Parcela ${p.num}/${g.total}${p.pago?' · paga':''}"></span>`
+    ).join('') + '</div>';
+  }
+  const pct = Math.max(3, Math.min(100, numAtual / g.total * 100));
+  return `<div class="parc-bar"><i style="width:${pct}%;background:${cor}"></i></div>`;
+}
+
+function renderParcelas(items) {
+  const el = document.getElementById('contentArea');
+  const CATS = getAllCats();
+  const grupos = parcelaGrupos();
+  const porId = {};
+  grupos.forEach(g => porId[g.id] = g);
+
+  const doMes = items.filter(isParcelada)
+    .sort((a,b) => String(a.vencimento||a.data).localeCompare(String(b.vencimento||b.data)));
+  const totalMes = doMes.reduce((s,l) => s + l.valor, 0);
+  const pagoMes = doMes.filter(l => l.status==='pago').reduce((s,l) => s + l.valor, 0);
+
+  let html = '';
+  if (!doMes.length) {
+    html += `<div class="section-box"><div class="empty-state"><div class="ei">🔁</div>
+      <p><b>Nenhuma parcela em ${mesLabel(mesKeyDe(year, month))}.</b><br>
+      Ao lançar uma compra, ligue <b>“Conta parcelada”</b> para acompanhar o progresso aqui.</p></div></div>`;
+  } else {
+    html += `<div class="parc-box">
+      <div class="parc-box-header">
+        <div>
+          <span class="section-title">Parceladas · ${mesLabel(mesKeyDe(year, month))}</span>
+          <div class="parc-box-sub">${doMes.length} conta${doMes.length!==1?'s':''} · ${fmt(pagoMes)} já pago</div>
+        </div>
+        <div class="parc-box-total"><span>no mês</span>${fmt(totalMes)}</div>
+      </div>
+      ${doMes.map(l => parcelaItemHTML(l, porId[l.parcela.grupoId || ('solo_'+l.id)], CATS)).join('')}
+    </div>`;
+  }
+  html += liberdadeHTML(grupos);
+  el.innerHTML = html;
+}
+
+function parcelaItemHTML(l, g, CATS) {
+  const c = CATS.find(x => x.id === l.categoria) || CATS[CATS.length-1];
+  const num = l.parcela.num || 1, total = l.parcela.total;
+  const restantes = g ? g.restantes : Math.max(0, total - num);
+  const faltaValor = g ? g.valorRestante : restantes * l.valor;
+  const fim = g ? (g.fimAbertoMes || g.fimMes) : mesKey(addMeses(l.data, total - num));
+  const quitada = restantes === 0;
+
+  let statusBadge;
+  if (l.status === 'pago') {
+    statusBadge = `<span class="badge-pago">✅ Pago</span>`;
+  } else {
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const isLate = l.vencimento && new Date(l.vencimento+'T12:00:00') < hoje;
+    statusBadge = isLate
+      ? `<span class="badge-atrasado" onclick="toggleStatus('${l.id}')">⚠ Atrasado</span>`
+      : `<span class="badge-pendente" onclick="toggleStatus('${l.id}')">⏳ Pendente</span>`;
+  }
+
+  return `<div class="parc-item${quitada?' quitada':''}">
+    <div class="parc-item-top">
+      <div class="entry-badge" style="background:${c.color}22">${c.emoji}</div>
+      <div class="parc-item-info">
+        <div class="parc-item-desc">${esc(l.descricao)}</div>
+        <div class="entry-meta">
+          <span>${c.nome}</span>
+          ${l.cartao ? `<span class="badge-cartao">💳 ${esc(l.cartao)}</span>` : ''}
+          ${statusBadge}${vencimentoHTML(l)}
+        </div>
+      </div>
+      <div class="parc-item-right">
+        <div class="entry-val">${fmt(l.valor)}</div>
+        <div class="parc-item-sub" title="Soma das parcelas ainda não pagas deste parcelamento">${quitada ? 'quitado ✓' : 'restam '+fmt(faltaValor)}</div>
+      </div>
+      <div class="entry-actions">
+        <button class="entry-btn edit" onclick="openModal('${l.id}')" title="Editar">✏</button>
+        <button class="entry-btn del" onclick="deletar('${l.id}')" title="Excluir">✕</button>
+      </div>
+    </div>
+    ${parcBarHTML(g, c.color, num)}
+    <div class="parc-item-foot">
+      ${parcelaChipHTML(l)}
+      ${quitada
+        ? `<span>🎉 <b>Última parcela paga!</b></span>`
+        : `<span>falta${restantes!==1?'m':''} <b>${restantes}</b> parcela${restantes!==1?'s':''} · termina em <b>${mesLabel(fim, true)}</b></span>`}
+      ${g && g.lancadas < g.total ? `<span title="Algumas parcelas ainda não foram lançadas — os meses seguintes são uma projeção">· ${g.total - g.lancadas} projetada${g.total-g.lancadas!==1?'s':''}</span>` : ''}
+    </div>
+  </div>`;
+}
+
+// Painel “quando ficamos livres”: última parcela em aberto + linha do tempo mês a mês
+function liberdadeHTML(grupos) {
+  const ativos = grupos.filter(g => g.restantes > 0);
+  const mesVisto = mesKeyDe(year, month);
+
+  if (!grupos.length) return '';
+  if (!ativos.length) {
+    return `<div class="parc-free">
+      <div class="parc-free-top">
+        <div>
+          <div class="parc-free-label">Liberdade</div>
+          <div class="parc-free-month">Sem parcelas em aberto</div>
+          <div class="parc-free-sub">Todas as ${grupos.length} compra${grupos.length!==1?'s':''} parcelada${grupos.length!==1?'s':''} estão quitadas.</div>
+        </div>
+        <div class="parc-free-icon">🎉</div>
+      </div>
+    </div>`;
+  }
+
+  // mapas de valor por mês (total x já pago)
+  const total = {}, pago = {};
+  grupos.forEach(g => g.linha.forEach(p => {
+    total[p.mes] = (total[p.mes] || 0) + p.valor;
+    if (p.pago) pago[p.mes] = (pago[p.mes] || 0) + p.valor;
+  }));
+
+  const ultimoAberto = ativos.reduce((m,g) => (g.fimAbertoMes > m ? g.fimAbertoMes : m), '');
+  const livreMes = mesKeyAdd(ultimoAberto, 1);
+  const hoje = new Date();
+  const atrasadoTudo = ultimoAberto < mesKeyDe(hoje.getFullYear(), hoje.getMonth()); // só sobrou parcela vencida
+  const emAberto = ativos.reduce((s,g) => s + g.valorRestante, 0);
+  const parcelasAbertas = ativos.reduce((s,g) => s + g.restantes, 0);
+
+  // linha do tempo: do mês visto até a última parcela (mínimo 6 colunas, máximo 18)
+  let fim = ultimoAberto > mesKeyAdd(mesVisto, 5) ? ultimoAberto : mesKeyAdd(mesVisto, 5);
+  const cols = [];
+  for (let mk = mesVisto, i = 0; mk <= fim && i < 18; mk = mesKeyAdd(mk, 1), i++) cols.push(mk);
+  const maxVal = Math.max(...cols.map(mk => total[mk] || 0), 1);
+
+  const timeline = cols.map(mk => {
+    const v = total[mk] || 0;
+    const pg = pago[mk] || 0;
+    const h = v > 0 ? Math.max(8, Math.round(v / maxVal * 100)) : 3;
+    const hPg = v > 0 ? Math.round(pg / v * 100) : 0;
+    const cls = (mk === mesVisto ? ' now' : '') + (v === 0 ? ' free' : '');
+    return `<div class="tl-col${cls}" title="${mesLabel(mk)} · ${v ? fmt(v) : 'sem parcelas'}">
+      <div class="tl-bar-wrap"><div class="tl-bar" style="height:${h}%"><i style="height:${hPg}%"></i></div></div>
+      <div class="tl-lbl">${MESES_ABREV[Number(mk.slice(5,7))-1]}${mk.slice(5,7)==='01'?"'"+mk.slice(2,4):''}</div>
+    </div>`;
+  }).join('');
+
+  const rows = ativos.slice(0, 6).map(g => {
+    const pct = Math.max(6, Math.min(100, g.pagas / g.total * 100));
+    return `<div class="parc-free-row">
+      <span class="parc-chip" title="${g.pagas} de ${g.total} parcelas pagas">${g.pagas}/${g.total}<span class="pc-bar"><i style="width:${pct}%"></i></span></span>
+      <span class="pfr-name">${esc(g.descricao)}</span>
+      <span class="pfr-end">até ${mesLabel(g.fimAbertoMes, true)}</span>
+    </div>`;
+  }).join('');
+
+  return `<div class="parc-free">
+    <div class="parc-free-top">
+      <div>
+        <div class="parc-free-label">${atrasadoTudo ? 'Parcelas em atraso' : 'Livres a partir de'}</div>
+        <div class="parc-free-month">${mesLabel(atrasadoTudo ? ultimoAberto : livreMes)}</div>
+        <div class="parc-free-sub">
+          ${atrasadoTudo
+            ? `A última parcela em aberto era de <b>${mesLabel(ultimoAberto, true)}</b> — quite para ficar livre.<br>`
+            : `Última parcela em <b>${mesLabel(ultimoAberto, true)}</b> · ${ativos.length} parcelamento${ativos.length!==1?'s':''} ativo${ativos.length!==1?'s':''}<br>`}
+          ${parcelasAbertas} parcela${parcelasAbertas!==1?'s':''} em aberto — <b>${fmt(emAberto)}</b> a pagar
+        </div>
+      </div>
+      <div class="parc-free-icon">${atrasadoTudo ? '⚠️' : '🎉'}</div>
+    </div>
+    <div class="parc-timeline">${timeline}</div>
+    <div class="parc-free-legend">Cada barra = total parcelado do mês · trecho verde = já pago</div>
+    ${rows ? `<div class="parc-free-list">${rows}${ativos.length>6?`<div class="parc-free-row"><span class="pfr-end">+ ${ativos.length-6} outro${ativos.length-6!==1?'s':''}…</span></div>`:''}</div>` : ''}
+  </div>`;
 }
 
 // ─── RENDER ────────────────────────────────────────────────────────────────
@@ -831,7 +1218,9 @@ function render() {
   updatePeriod();
   const items = getFiltered();
   updateSummary(getMonthItems());
-  view==='lista' ? renderLista(items) : renderCats(getMonthItems());
+  if (view === 'lista') renderLista(items);
+  else if (view === 'categorias') renderCats(getMonthItems());
+  else renderParcelas(items);
 }
 
 function getMonthItems() {
@@ -845,13 +1234,13 @@ function getFiltered() {
     if (filtro === 'todos') return true;
     if (filtro === 'pendente') return l.status === 'pendente';
     if (filtro === 'pago') return l.status === 'pago';
+    if (filtro === 'parceladas') return isParcelada(l);
     return l.pessoa === filtro;
   });
 }
 
 function updatePeriod() {
-  const M=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  document.getElementById('periodLabel').textContent = M[month]+' '+year;
+  document.getElementById('periodLabel').textContent = MESES[month]+' '+year;
 }
 
 function updateSummary(items) {
@@ -948,6 +1337,7 @@ function renderLista(items) {
         const traderBadge = (String(l.id).startsWith('gt_') || l.origem==='geff-trader') ? `<span class="badge-cartao" title="veio automático do Geff Trader">⚡ Trader</span>` : '';
         const cartaoBadge = l.cartao ? `<span class="badge-cartao">💳 ${esc(l.cartao)}</span>` : '';
         const vencBadge = vencimentoHTML(l);
+        const parcChip = parcelaChipHTML(l);
 
         return `<div class="entry-item">
           <div class="entry-badge" style="background:${c.color}22">${c.emoji}</div>
@@ -955,7 +1345,7 @@ function renderLista(items) {
             <div class="entry-desc">${esc(l.descricao)}</div>
             <div class="entry-meta">
               <span>${c.nome} · ${ds}</span>
-              ${pessoaBadge}${traderBadge}${cartaoBadge}${statusBadge}${vencBadge}
+              ${parcChip}${pessoaBadge}${traderBadge}${cartaoBadge}${statusBadge}${vencBadge}
             </div>
           </div>
           <div class="entry-val">${fmt(l.valor)}</div>
@@ -1058,6 +1448,13 @@ function openModal(id) {
   document.getElementById('cartaoGroup').style.display='none';
   document.getElementById('vencGroup').style.display='none';
 
+  // Reset do parcelamento
+  setParcelado(false);
+  document.getElementById('fParcNum').value = 1;
+  document.getElementById('fParcTotal').value = '';
+  document.getElementById('fParcGerar').checked = true;
+  document.getElementById('fParcAplicar').checked = false;
+
   if (editId) {
     const l = lancamentos.find(x=>x.id===editId);
     if (!l) return;
@@ -1069,6 +1466,11 @@ function openModal(id) {
     selectStatus(l.status);
     if (l.pessoa) selectPessoa(l.pessoa);
     if (l.cartao) selectCartao(l.cartao);
+    if (isParcelada(l)) {
+      document.getElementById('fParcNum').value = l.parcela.num || 1;
+      document.getElementById('fParcTotal').value = l.parcela.total;
+      setParcelado(true);
+    }
   } else {
     document.getElementById('fDesc').value='';
     document.getElementById('fValor').value='';
@@ -1081,6 +1483,45 @@ function openModal(id) {
 }
 
 function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+
+// ─── PARCELAMENTO NO FORM ──────────────────────────────────────────────────
+function toggleParcelado() { setParcelado(!parcelado); }
+
+function setParcelado(on) {
+  parcelado = !!on;
+  document.getElementById('parcSwitchRow').classList.toggle('on', parcelado);
+  document.getElementById('parcFields').style.display = parcelado ? 'block' : 'none';
+
+  // Grupo já existente (outras parcelas lançadas) → não gera de novo, só propaga alterações
+  const atual = editId ? lancamentos.find(l => l.id === editId) : null;
+  const grupoId = atual && atual.parcela ? atual.parcela.grupoId : null;
+  const jaTemGrupo = !!grupoId && lancamentos.some(l => l.id !== editId && l.parcela && l.parcela.grupoId === grupoId);
+  document.getElementById('parcGerarRow').style.display = jaTemGrupo ? 'none' : 'flex';
+  document.getElementById('parcAplicarRow').style.display = jaTemGrupo ? 'flex' : 'none';
+  document.getElementById('statusHint').textContent = (parcelado && !jaTemGrupo) ? '(vale para esta parcela — as próximas nascem pendentes)' : '';
+
+  updateParcPreview();
+}
+
+function updateParcPreview() {
+  const el = document.getElementById('parcPreview');
+  if (!parcelado) { el.innerHTML = ''; return; }
+  const num = parseInt(document.getElementById('fParcNum').value, 10) || 1;
+  const total = parseInt(document.getElementById('fParcTotal').value, 10) || 0;
+  const valor = parseFloat(document.getElementById('fValor').value) || 0;
+  const data = document.getElementById('fData').value;
+
+  if (total < 2) { el.innerHTML = 'Informe em <b>quantas vezes</b> a conta foi dividida.'; return; }
+  if (num > total) { el.innerHTML = '⚠️ A parcela atual não pode ser maior que o total.'; return; }
+  if (!data) { el.innerHTML = 'Informe a <b>data</b> para calcular o fim do parcelamento.'; return; }
+
+  const restantes = total - num;
+  const fim = mesKey(addMeses(data, restantes));
+  el.innerHTML = `${parcelaChipHTML({ parcela: { num, total } })}
+    ${valor ? `<span><b>${fmt(valor)}</b> × ${total} = <b>${fmt(valor*total)}</b></span>` : `<span>${total} parcelas</span>`}
+    <span>· última em <b>${mesLabel(fim)}</b></span>
+    <span>· ${restantes ? `livre a partir de <b>${mesLabel(mesKeyAdd(fim, 1))}</b>` : '<b>esta é a última 🎉</b>'}</span>`;
+}
 
 function buildCatPicker() {
   const CATS = getAllCats();
@@ -1153,8 +1594,22 @@ async function salvar() {
   if (!selStatus) { showToast('Escolha o status'); return; }
   if (selStatus==='pago' && !selPessoa) { showToast('Escolha quem pagou'); return; }
 
+  // 🔁 Parcelamento
+  let pNum = 1, pTotal = 0;
+  if (parcelado) {
+    pNum = parseInt(document.getElementById('fParcNum').value, 10) || 1;
+    pTotal = parseInt(document.getElementById('fParcTotal').value, 10) || 0;
+    if (pTotal < 2) { showToast('Informe o total de parcelas (2 ou mais)'); return; }
+    if (pNum < 1 || pNum > pTotal) { showToast('Parcela atual inválida'); return; }
+  }
+
   const btn = document.getElementById('btnSalvar');
   btn.disabled=true; btn.textContent='Salvando…';
+
+  const atual = editId ? lancamentos.find(l=>l.id===editId) : null;
+  const grupoId = parcelado
+    ? ((atual && atual.parcela && atual.parcela.grupoId) || 'p' + Date.now())
+    : null;
 
   const obj = {
     id: editId || Date.now().toString(),
@@ -1165,24 +1620,69 @@ async function salvar() {
     cartao: selCartao,
     status: selStatus,
     vencimento: selStatus === 'pendente' ? venc : null,
-    criadoEm: editId ? (lancamentos.find(l=>l.id===editId)||{}).criadoEm : new Date().toISOString(),
-    origem: editId ? (lancamentos.find(l=>l.id===editId)||{}).origem : undefined,
+    parcela: parcelado ? { num: pNum, total: pTotal, grupoId } : null,
+    criadoEm: atual ? atual.criadoEm : new Date().toISOString(),
+    origem: atual ? atual.origem : undefined,
     editadoEm: new Date().toISOString()
   };
 
   const prev = [...lancamentos];
-  if (editId) {
-    lancamentos = lancamentos.map(l => l.id===editId ? obj : l);
-  } else {
-    lancamentos.push(obj);
+  const agora = new Date().toISOString();
+  let geradas = 0, atualizadas = 0, rollback = [];
+
+  if (editId) lancamentos = lancamentos.map(l => l.id===editId ? obj : l);
+  else lancamentos.push(obj);
+
+  if (parcelado) {
+    const irmas = lancamentos.filter(l => l.id !== obj.id && l.parcela && l.parcela.grupoId === grupoId);
+
+    // Grupo novo → lança uma parcela por mês até a última
+    if (!irmas.length && document.getElementById('fParcGerar').checked) {
+      const baseVenc = venc || data;
+      for (let k = pNum + 1; k <= pTotal; k++) {
+        const off = k - pNum;
+        lancamentos.push({
+          id: grupoId + '_' + k,
+          categoria: selCat,
+          descricao: desc,
+          valor,
+          data: addMeses(data, off),
+          pessoa: null,
+          cartao: selCartao,
+          status: 'pendente',
+          vencimento: addMeses(baseVenc, off),
+          parcela: { num: k, total: pTotal, grupoId },
+          criadoEm: agora,
+          editadoEm: agora
+        });
+        geradas++;
+      }
+    }
+
+    // Grupo existente → opcionalmente propaga para as parcelas ainda não pagas
+    if (irmas.length && document.getElementById('fParcAplicar').checked) {
+      irmas.forEach(l => {
+        if (l.status === 'pago') return;
+        rollback.push({ ref: l, antes: { ...l, parcela: { ...l.parcela } } });
+        l.descricao = desc;
+        l.categoria = selCat;
+        l.valor = valor;
+        l.parcela.total = pTotal;
+        l.editadoEm = agora;
+        atualizadas++;
+      });
+    }
   }
 
   try {
     await persist();
     closeModal();
     render();
-    showToast(editId ? 'Lançamento atualizado ✓' : 'Lançamento salvo ✓');
+    if (geradas) showToast(`🔁 ${geradas+1} parcelas lançadas ✓`);
+    else if (atualizadas) showToast(`Atualizado + ${atualizadas} parcela${atualizadas!==1?'s':''} em aberto ✓`);
+    else showToast(editId ? 'Lançamento atualizado ✓' : 'Lançamento salvo ✓');
   } catch(e) {
+    rollback.forEach(r => Object.assign(r.ref, r.antes));
     lancamentos = prev;
   }
 
@@ -1191,11 +1691,23 @@ async function salvar() {
 }
 
 async function deletar(id) {
-  if (!confirm('Excluir este lançamento?')) return;
+  const alvo = lancamentos.find(l => l.id === id);
+  const grupoId = alvo && alvo.parcela ? alvo.parcela.grupoId : null;
+  const irmas = grupoId ? lancamentos.filter(l => l.parcela && l.parcela.grupoId === grupoId) : [];
+
+  let ids = [id];
+  if (irmas.length > 1) {
+    const p = alvo.parcela;
+    const todas = confirm(`"${alvo.descricao}" é parcelado (${p.num}/${p.total}) e tem ${irmas.length} parcelas lançadas.\n\nOK = excluir TODAS as ${irmas.length} parcelas\nCancelar = escolher só esta`);
+    if (todas) ids = irmas.map(l => l.id);
+    else if (!confirm(`Excluir somente a parcela ${p.num}/${p.total}?`)) return;
+  } else if (!confirm('Excluir este lançamento?')) return;
+
+  const alvos = new Set(ids.map(String));
   const prev = [...lancamentos];
-  _tombstones.add(String(id));
-  lancamentos = lancamentos.filter(l=>l.id!==id);
-  try { await persist(); render(); showToast('Lançamento excluído'); }
+  alvos.forEach(i => _tombstones.add(i));
+  lancamentos = lancamentos.filter(l => !alvos.has(String(l.id)));
+  try { await persist(); render(); showToast(alvos.size > 1 ? `${alvos.size} parcelas excluídas` : 'Lançamento excluído'); }
   catch(e) { lancamentos=prev; render(); }
 }
 
@@ -1347,6 +1859,7 @@ function setView(v) {
   view=v;
   document.getElementById('btnLista').classList.toggle('active',v==='lista');
   document.getElementById('btnCat').classList.toggle('active',v==='categorias');
+  document.getElementById('btnParc').classList.toggle('active',v==='parcelas');
   render();
 }
 
@@ -1361,16 +1874,15 @@ function exportCSV() {
   const items=getMonthItems();
   if(!items.length){showToast('Sem dados para exportar');return;}
   const CATS = getAllCats();
-  const rows=[['Data','Categoria','Descrição','Valor (R$)','Quem','Cartão','Status','Vencimento']];
+  const rows=[['Data','Categoria','Descrição','Valor (R$)','Quem','Cartão','Status','Vencimento','Parcela']];
   items.forEach(l=>{
     const c=CATS.find(c=>c.id===l.categoria);
-    rows.push([l.data,c?c.nome:l.categoria,l.descricao,l.valor.toFixed(2),l.pessoa||'',l.cartao||'',l.status||'',l.vencimento||'']);
+    rows.push([l.data,c?c.nome:l.categoria,l.descricao,l.valor.toFixed(2),l.pessoa||'',l.cartao||'',l.status||'',l.vencimento||'',isParcelada(l)?l.parcela.num+'/'+l.parcela.total:'']);
   });
   const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));
-  const M=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  a.download='casinha_'+M[month]+'_'+year+'.csv';
+  a.download='casinha_'+MESES_ABREV[month]+'_'+year+'.csv';
   a.click();
   showToast('CSV exportado ✓');
 }
