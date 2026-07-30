@@ -81,7 +81,22 @@
 
   /* ENTRIES */
   .entries-box { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 14px; }
-  .entries-box-header { padding: 14px 18px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  /* CABEÇALHO DAS CAIXAS (clicável — minimiza/expande) */
+  .box-head { padding: 13px 16px 12px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; user-select: none; transition: background 0.15s; }
+  .box-head:hover { background: var(--bg); }
+  .box-head-left { min-width: 0; flex: 1; }
+  .box-head-title { display: flex; align-items: center; gap: 7px; }
+  .box-pill { background: var(--surface2); color: var(--muted); font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 99px; }
+  .box-head-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .box-head-chips { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-top: 7px; }
+  .box-head-right { display: flex; align-items: center; gap: 11px; flex-shrink: 0; }
+  .box-head-total { font-family: 'Playfair Display', serif; font-size: 17px; letter-spacing: -0.4px; text-align: right; line-height: 1.15; }
+  .box-head-total span { display: block; font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.7px; }
+  .box-caret { width: 26px; height: 26px; border-radius: 8px; background: var(--surface2); color: var(--muted); font-size: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), background 0.15s, color 0.15s; }
+  .box-head:hover .box-caret { background: var(--text); color: white; }
+  .collapsed .box-head { border-bottom: none; }
+  .collapsed .box-caret { transform: rotate(-90deg); }
+  .collapsed .box-body { display: none; }
   .entry-item { display: flex; align-items: center; padding: 11px 18px; border-bottom: 1px solid var(--border); gap: 11px; transition: background 0.15s; }
   .entry-item:last-child { border-bottom: none; }
   .entry-item:hover { background: var(--bg); }
@@ -140,11 +155,7 @@
   .parc-chip.full .pc-bar i { background: var(--green); }
 
   /* ── PARCELAS: VIEW DO MÊS ── */
-  .parc-box { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 14px; }
-  .parc-box-header { padding: 14px 18px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .parc-box-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
-  .parc-box-total { font-family: 'Playfair Display', serif; font-size: 19px; letter-spacing: -0.5px; text-align: right; }
-  .parc-box-total span { display: block; font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.7px; }
+  .parc-vazio { padding: 20px 18px; text-align: center; font-size: 12.5px; color: var(--muted); line-height: 1.6; }
 
   .parc-item { padding: 12px 18px 13px; border-bottom: 1px solid var(--border); transition: background 0.15s; }
   .parc-item:last-child { border-bottom: none; }
@@ -166,7 +177,7 @@
   .parc-seg span.pg { background: var(--green); }
 
   /* ── PARCELAS: PAINEL LIBERDADE ── */
-  .parc-free { background: var(--text); color: white; border-radius: 16px; padding: 16px 18px; margin-bottom: 14px; }
+  .parc-free { background: var(--text); color: white; border-radius: 14px; padding: 15px 16px; margin: 12px 14px 14px; }
   .parc-free-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
   .parc-free-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.9px; color: #C8A882; }
   .parc-free-month { font-family: 'Playfair Display', serif; font-size: 24px; letter-spacing: -0.5px; line-height: 1.15; margin-top: 3px; }
@@ -452,7 +463,6 @@
     <div class="view-toggle">
       <button class="active" id="btnLista" onclick="setView('lista')">Lista</button>
       <button id="btnCat" onclick="setView('categorias')">Categorias</button>
-      <button id="btnParc" onclick="setView('parcelas')">Parcelas</button>
     </div>
   </div>
 
@@ -716,6 +726,8 @@ let editId = null;
 let currentAccount = null;
 let selEmojiCustom = '📌';
 let parcelado = false; // 🔁 lançamento em edição/criação é parcelado?
+let secoes = { lanc: true, parc: true }; // caixas abertas/minimizadas (por aparelho)
+try { Object.assign(secoes, JSON.parse(localStorage.getItem('casinha_secoes') || '{}')); } catch(e) {}
 
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const MESES_ABREV = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -1050,10 +1062,12 @@ function parcBarHTML(g, cor, numAtual) {
   return `<div class="parc-bar"><i style="width:${pct}%;background:${cor}"></i></div>`;
 }
 
-function renderParcelas(items) {
-  const el = document.getElementById('contentArea');
+// Caixa própria das parceladas — mesma ideia da caixa de Lançamentos, minimizável
+function boxParcelasHTML(items) {
   const CATS = getAllCats();
   const grupos = parcelaGrupos();
+  if (!grupos.length) return ''; // ninguém usa parcelamento ainda → nem mostra a caixa
+
   const porId = {};
   grupos.forEach(g => porId[g.id] = g);
 
@@ -1061,26 +1075,28 @@ function renderParcelas(items) {
     .sort((a,b) => String(a.vencimento||a.data).localeCompare(String(b.vencimento||b.data)));
   const totalMes = doMes.reduce((s,l) => s + l.valor, 0);
   const pagoMes = doMes.filter(l => l.status==='pago').reduce((s,l) => s + l.valor, 0);
+  const aberta = secoes.parc !== false;
+  const ativos = grupos.filter(g => g.restantes > 0);
+  const ultimoAberto = ativos.reduce((m,g) => (g.fimAbertoMes > m ? g.fimAbertoMes : m), '');
 
-  let html = '';
-  if (!doMes.length) {
-    html += `<div class="section-box"><div class="empty-state"><div class="ei">🔁</div>
-      <p><b>Nenhuma parcela em ${mesLabel(mesKeyDe(year, month))}.</b><br>
-      Ao lançar uma compra, ligue <b>“Conta parcelada”</b> para acompanhar o progresso aqui.</p></div></div>`;
-  } else {
-    html += `<div class="parc-box">
-      <div class="parc-box-header">
-        <div>
-          <span class="section-title">Parceladas · ${mesLabel(mesKeyDe(year, month))}</span>
-          <div class="parc-box-sub">${doMes.length} conta${doMes.length!==1?'s':''} · ${fmt(pagoMes)} já pago</div>
-        </div>
-        <div class="parc-box-total"><span>no mês</span>${fmt(totalMes)}</div>
-      </div>
-      ${doMes.map(l => parcelaItemHTML(l, porId[l.parcela.grupoId || ('solo_'+l.id)], CATS)).join('')}
-    </div>`;
-  }
-  html += liberdadeHTML(grupos);
-  el.innerHTML = html;
+  const sub = doMes.length
+    ? `${fmt(pagoMes)} já pago${ultimoAberto ? ` · livres em <b>${mesLabel(mesKeyAdd(ultimoAberto, 1), true)}</b>` : ''}`
+    : (ultimoAberto ? `nada em ${mesLabel(mesKeyDe(year, month), true)} · livres em <b>${mesLabel(mesKeyAdd(ultimoAberto, 1), true)}</b>` : 'tudo quitado 🎉');
+
+  // minimizada: os chips de progresso viram o resumo
+  const chips = doMes.slice(0, 4).map(l => parcelaChipHTML(l)).join('')
+    + (doMes.length > 4 ? `<span class="box-pill">+${doMes.length-4}</span>` : '');
+
+  const corpo = doMes.length
+    ? doMes.map(l => parcelaItemHTML(l, porId[l.parcela.grupoId || ('solo_'+l.id)], CATS)).join('')
+    : `<div class="parc-vazio">${filtro === 'todos'
+        ? `Nenhuma parcela cai em <b>${mesLabel(mesKeyDe(year, month))}</b>.`
+        : 'Nenhuma parcela nesta seleção de filtro.'}</div>`;
+
+  return `<div class="entries-box${aberta?'':' collapsed'}">
+    ${boxHeadHTML('parc', '🔁 Parceladas', doMes.length || null, sub, doMes.length ? totalMes : null, 'no mês', chips)}
+    <div class="box-body">${corpo}${liberdadeHTML(grupos)}</div>
+  </div>`;
 }
 
 function parcelaItemHTML(l, g, CATS) {
@@ -1219,8 +1235,7 @@ function render() {
   const items = getFiltered();
   updateSummary(getMonthItems());
   if (view === 'lista') renderLista(items);
-  else if (view === 'categorias') renderCats(getMonthItems());
-  else renderParcelas(items);
+  else renderCats(getMonthItems());
 }
 
 function getMonthItems() {
@@ -1310,14 +1325,44 @@ function vencimentoHTML(l) {
   }
 }
 
+// Cabeçalho clicável das caixas: título + resumo (e chips quando minimizada)
+function boxHeadHTML(chave, titulo, qtd, sub, total, rotuloTotal, chips) {
+  const aberta = secoes[chave] !== false;
+  return `<div class="box-head" onclick="toggleSecao('${chave}')" title="${aberta?'Minimizar':'Expandir'}">
+    <div class="box-head-left">
+      <div class="box-head-title">
+        <span class="section-title">${titulo}</span>
+        ${qtd ? `<span class="box-pill">${qtd}</span>` : ''}
+      </div>
+      ${sub ? `<div class="box-head-sub">${sub}</div>` : ''}
+      ${(!aberta && chips) ? `<div class="box-head-chips">${chips}</div>` : ''}
+    </div>
+    <div class="box-head-right">
+      ${total !== null ? `<div class="box-head-total">${rotuloTotal?`<span>${rotuloTotal}</span>`:''}${fmt(total)}</div>` : ''}
+      <span class="box-caret">▼</span>
+    </div>
+  </div>`;
+}
+
 function renderLista(items) {
-  const el = document.getElementById('contentArea');
+  document.getElementById('contentArea').innerHTML = boxLancamentosHTML(items) + boxParcelasHTML(items);
+}
+
+function boxLancamentosHTML(items) {
   const CATS = getAllCats();
+  const aberta = secoes.lanc !== false;
+  const total = items.reduce((s,l) => s + l.valor, 0);
+  const pendentes = items.filter(l => l.status === 'pendente').length;
+  const head = boxHeadHTML('lanc', 'Lançamentos', items.length,
+    items.length ? `${pendentes} pendente${pendentes!==1?'s':''} · ${items.length-pendentes} pago${items.length-pendentes!==1?'s':''}` : 'nada neste mês',
+    items.length ? total : null, 'no mês', null);
+
   if (!items.length) {
-    el.innerHTML='<div class="entries-box"><div class="empty-state"><div class="ei">🏠</div><p>Nenhum lançamento encontrado.</p></div></div>';
-    return;
+    return `<div class="entries-box${aberta?'':' collapsed'}">${head}
+      <div class="box-body"><div class="empty-state"><div class="ei">🏠</div><p>Nenhum lançamento encontrado.</p></div></div></div>`;
   }
-  el.innerHTML = '<div class="entries-box"><div class="entries-box-header"><span class="section-title">Lançamentos</span></div>'
+
+  return `<div class="entries-box${aberta?'':' collapsed'}">${head}<div class="box-body">`
     + items.map(l => {
         const c = CATS.find(c=>c.id===l.categoria) || CATS[CATS.length-1];
         const ds = new Date(l.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
@@ -1355,7 +1400,7 @@ function renderLista(items) {
           </div>
         </div>`;
       }).join('')
-    + '</div>';
+    + '</div></div>';
 }
 
 function renderCats(items) {
@@ -1859,7 +1904,13 @@ function setView(v) {
   view=v;
   document.getElementById('btnLista').classList.toggle('active',v==='lista');
   document.getElementById('btnCat').classList.toggle('active',v==='categorias');
-  document.getElementById('btnParc').classList.toggle('active',v==='parcelas');
+  render();
+}
+
+// Caixas minimizáveis (Lançamentos / Parceladas) — a escolha fica salva no aparelho
+function toggleSecao(k) {
+  secoes[k] = !secoes[k];
+  try { localStorage.setItem('casinha_secoes', JSON.stringify(secoes)); } catch(e) {}
   render();
 }
 
