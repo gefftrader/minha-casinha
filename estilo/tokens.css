@@ -1,0 +1,263 @@
+/* ==========================================================================
+   tokens.css  ·  Geff Trader · design system  ·  v1.3 · 2026-10-12 (tema casinha) · copiado de v1.3 · 2026-10-12
+   Fonte canônica em ~/.claude/skills/geff-design-system/tokens.css;
+   copie pro projeto como estilo/tokens.css e anote a versão no cabeçalho
+   da cópia (ex.: "copiado de v1 · 2026-08-21").
+
+   Uso: <html data-theme="light|dark" data-cliente="vitoria|luizinho|natally|jgermano|preenta|oliveira-macaco|rachadosabado|fbkav|casinha|geff-site">
+   Um painel novo sobrescreve SÓ a camada 2 (5 variáveis). O resto deriva.
+   Componentes (componentes.css) só consomem a camada 3 (semânticos).
+
+   Camadas:
+     1. marca crua (design-guide)       landing e material, nunca UI densa
+     2. tema por cliente (5 variáveis)  o que muda de cliente pra cliente
+     3. semânticos claro / 3b escuro     o que os componentes usam
+     4. temas por cliente prontos        vitoria, luizinho, natally, jgermano, geff-site
+     5. base mínima                      reset curto e utilitários
+     6. aliases de migração              apagar até 30/11/2026
+   Requer color-mix(): Safari 16.2+ / Chrome 111+. Tokens críticos
+   (--border, --text-2, --text-3) têm fallback estático antes do color-mix.
+   ========================================================================== */
+
+/* ---------- 1. MARCA CRUA (design-guide.md) ---------- */
+/* Só pra landing, carrossel, proposta e material. Em painel, não usar
+   --gt-verde como texto nem como fundo de área grande. */
+:root{
+  --gt-verde:#1FDB62;
+  --gt-verde-fundo:#0A7F39;
+  --gt-marinho:#070B2B;
+  --gt-slate:#4A577F;
+  --gt-menta:#E7F7EC;
+  --gt-nuvem:#F3F7F3;
+  --gt-wa-balao:#D9FDD3;
+  --gt-wa-faixa:#CFF0DA;
+}
+
+/* ---------- 2. TEMA (o que um cliente muda) ---------- */
+/* Padrão = paleta de painel do Geff (a da Central). */
+:root{
+  --marca:#2E7D5B;        /* acento principal no claro */
+  --marca-2:#A97B1F;      /* acento secundário (dourado) */
+  --papel:#FBF7EE;        /* fundo claro */
+  --tinta:#16294D;        /* texto no claro */
+  --fonte-titulo:var(--fonte-corpo);
+
+  /* opcionais de precisão; sem eles o escuro é derivado da tinta:
+     --marca-escura  acento no escuro
+     --papel-escuro  fundo no escuro
+     --tinta-escura  texto no escuro */
+
+  --fonte-corpo:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+  --fonte-marca:var(--fonte-titulo);   /* wordmark/logo (ex.: Allura na Vitória) */
+  --fonte-mono:'JetBrains Mono','SF Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+
+/* ---------- 3. SEMÂNTICOS · CLARO ---------- */
+:root{
+  --bg:var(--papel);
+  --surface:#FFFFFF;
+  --surface-2:#F4EDDC;
+  --surface-2:color-mix(in srgb, var(--papel) 94%, var(--tinta));
+  --border:#E3D9C6;
+  --border:color-mix(in srgb, var(--papel) 88%, var(--tinta));
+  --text:var(--tinta);
+  --text-2:#5B6E93;
+  --text-2:color-mix(in srgb, var(--tinta) 70%, var(--papel));
+  --text-3:#93A0BA;
+  --text-3:color-mix(in srgb, var(--tinta) 45%, var(--papel));
+
+  --accent:var(--marca);
+  --accent-suave:color-mix(in srgb, var(--marca) 14%, var(--surface));
+  --accent-texto:#FFFFFF;
+  --accent-2:var(--marca-2);
+  --accent-2-suave:color-mix(in srgb, var(--marca-2) 14%, var(--surface));
+
+  /* status: fixos e dessaturados; não seguem a marca de propósito */
+  --ok:#2E7D5B;   --ok-suave:color-mix(in srgb, var(--ok) 14%, var(--surface));
+  --warn:#A97B1F; --warn-suave:color-mix(in srgb, var(--warn) 14%, var(--surface));
+  --bad:#BF4F41;  --bad-suave:color-mix(in srgb, var(--bad) 14%, var(--surface));
+  --info:#4E7BB8; --info-suave:color-mix(in srgb, var(--info) 14%, var(--surface));
+  --realce:#FFF6D9;
+  /* zebrado de tabela e lista (06/10/2026): um tom de papel com um toque da
+     marca, sutil mas visível; o hover da linha é um tom acima. */
+  --zebra:#F8F4EC;
+  --zebra:color-mix(in srgb, var(--marca) 5%, color-mix(in srgb, var(--papel) 60%, var(--surface)));
+  --linha-hover:color-mix(in srgb, var(--marca) 9%, var(--surface));
+
+  --overlay:rgba(8,12,24,.45);
+  --sombra-1:0 1px 3px rgba(22,41,77,.08);
+  --sombra-1:0 1px 3px color-mix(in srgb, var(--tinta) 8%, transparent);
+  --sombra-2:0 4px 16px rgba(22,41,77,.10);
+  --sombra-2:0 4px 16px color-mix(in srgb, var(--tinta) 10%, transparent);
+  --sombra-3:0 24px 60px rgba(8,12,24,.28);
+
+  --raio-sm:7px;  --raio:10px;  --raio-lg:16px;  --raio-xl:20px;  --raio-pill:999px;
+  --esp-1:4px; --esp-2:8px; --esp-3:12px; --esp-4:16px; --esp-5:24px; --esp-6:32px;
+
+  --fs-xs:10.5px; --fs-sm:11.5px; --fs-base:13.5px; --fs-md:15px; --fs-lg:20px; --fs-kpi:22px;
+  --peso-titulo:650;
+  --kern-titulo:-0.015em;
+  --kern-rotulo:.06em;      /* rótulos: uppercase + kern aberto */
+  --transicao:.15s ease;
+  color-scheme:light;
+}
+
+/* ---------- 3b. SEMÂNTICOS · ESCURO (derivado da tinta; opcionais refinam) ---------- */
+:root[data-theme="dark"]{
+  --bg:var(--papel-escuro, color-mix(in srgb, var(--tinta) 80%, black));
+  --surface:color-mix(in srgb, var(--bg) 95%, white);
+  --surface-2:color-mix(in srgb, var(--bg) 90%, white);
+  --border:color-mix(in srgb, var(--bg) 88%, white);
+  --text:var(--tinta-escura, color-mix(in srgb, var(--papel) 95%, var(--tinta)));
+  --text-2:color-mix(in srgb, var(--text) 62%, var(--bg));
+  --text-3:color-mix(in srgb, var(--text) 40%, var(--bg));
+
+  --accent:var(--marca-escura, color-mix(in srgb, var(--marca) 72%, white));
+  --accent-suave:color-mix(in srgb, var(--accent) 16%, var(--surface));
+  --accent-texto:#0B1220;
+  --accent-2:color-mix(in srgb, var(--marca-2) 75%, white);
+  --accent-2-suave:color-mix(in srgb, var(--accent-2) 16%, var(--surface));
+
+  --ok:#63B491; --warn:#C7A046; --bad:#D9695B; --info:#7FA6DD;
+  --ok-suave:color-mix(in srgb, var(--ok) 16%, var(--surface));
+  --warn-suave:color-mix(in srgb, var(--warn) 16%, var(--surface));
+  --bad-suave:color-mix(in srgb, var(--bad) 16%, var(--surface));
+  --info-suave:color-mix(in srgb, var(--info) 16%, var(--surface));
+  --realce:color-mix(in srgb, var(--warn) 18%, var(--surface));
+  --zebra:color-mix(in srgb, var(--accent) 5%, color-mix(in srgb, var(--surface) 96%, white));
+  --linha-hover:color-mix(in srgb, var(--accent) 12%, var(--surface));
+
+  --overlay:rgba(0,0,0,.55);
+  --sombra-1:0 1px 3px rgba(0,0,0,.35);
+  --sombra-2:0 4px 16px rgba(0,0,0,.4);
+  --sombra-3:0 24px 60px rgba(0,0,0,.5);
+  color-scheme:dark;
+}
+
+/* ---------- 4. TEMAS POR CLIENTE (valores dos .env e arquivos reais) ---------- */
+/* Vitória Studio (salao.ts CLARO_PADRAO/ESCURO_PADRAO) */
+:root[data-cliente="vitoria"]{
+  --marca:#B5654A; --marca-escura:#C77A5C; --marca-2:#A6822E;
+  --papel:#FAF6F1; --papel-escuro:#201C18; --tinta:#2B2420; --tinta-escura:#F3ECE3;
+  --fonte-marca:'Allura',cursive;
+}
+/* Luizinho Barbershop (.env.luizinho) */
+:root[data-cliente="luizinho"]{
+  --marca:#A9822C; --marca-escura:#D4AF37; --marca-2:#3A3A3A;
+  --papel:#F6F4F0; --papel-escuro:#131315; --tinta:#221F1A; --tinta-escura:#F2EFE8;
+}
+/* Clínica Natally (.env.natally) */
+:root[data-cliente="natally"]{
+  --marca:#D6337C; --marca-escura:#E8629B; --marca-2:#8E5573;
+  --papel:#FAF5F7; --papel-escuro:#170F14; --tinta:#2B1B23; --tinta-escura:#F6EBF1;
+}
+/* Jorge Germano Engenharia (painel-jgermano.html) */
+:root[data-cliente="jgermano"]{
+  --marca:#E8632A; --marca-2:#0F6E68;
+  --papel:#F6F5F1; --tinta:#22252A;
+}
+/* Pré-Enta FC (racha de quadra · escudo preto e amarelo)
+   Amarelo não vira cor de texto: escurecer amarelo dá marrom, e marrom não é
+   time de futebol. Então o acento de LEITURA é o verde de campo fosco, e o
+   amarelo do escudo fica onde ele funciona inteiro: botão, estrela, destaque.
+   A barra de navegação é preta nos dois temas, definida no painel do projeto. */
+:root[data-cliente="preenta"]{
+  --marca:#2F6B4A; --marca-escura:#5FAE83; --marca-2:#D99E00;
+  --papel:#F3F1E7; --papel-escuro:#14130E; --tinta:#1B1A14; --tinta-escura:#F2EEE1;
+  /* Tipografia do sistema, a mesma do painel do JGermano: SF Pro no iPhone e
+     no Mac, e nos outros a família mais próxima que o aparelho já tem. Fonte
+     baixada dava cara de produto de software; assim o app parece do aparelho.
+     Nada de <link> pro Google: a fonte já está lá, e a tela pinta na hora. */
+  --fonte-corpo:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Helvetica Neue',Helvetica,'Segoe UI',Roboto,Arial,sans-serif;
+  --fonte-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+/* Oliveira Macaco Team (academia de jiu-jitsu e muay thai, Bom Conselho/PE)
+   Logo preto com faixa creme, "MACACO" em laranja e o macaco em degradê.
+   O laranja do logo (#E4782F) reprova como texto no branco (2,9:1): o acento
+   é ele queimado (#BD561A, 4,6:1) e o vivo fica pro escuro. O roxo do macaco
+   é o segundo acento. Fonte do sistema, como JGermano e Pré-Enta (mesma
+   cidade do JGermano). Cores das modalidades ficam no painel do projeto. */
+:root[data-cliente="oliveira-macaco"]{
+  --marca:#BD561A; --marca-escura:#E8843F; --marca-2:#6A4CB0;
+  --papel:#F8F5EF; --papel-escuro:#141312; --tinta:#1D1A17; --tinta-escura:#F2EEE7;
+  --fonte-corpo:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Helvetica Neue',Helvetica,'Segoe UI',Roboto,Arial,sans-serif;
+  --fonte-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+/* Racha do Sábado (a outra instância do painel do Pré-Enta, desde 2023)
+   Escudo redondo azul-marinho e creme sobre fundo pardo. O marinho (#2C3163)
+   é o acento de leitura no claro, e no escuro ele clareia pra lavanda, que é
+   o mesmo azul com luz. O pardo do escudo, puxado pro dourado pra aguentar
+   estrela e pódio sobre o creme, é o segundo acento. O creme dos botões e a
+   barra marinho ficam no painel do projeto, como o amarelo e a barra preta
+   do Pré-Enta. Fonte do sistema, como o Pré-Enta. */
+:root[data-cliente="rachadosabado"]{
+  --marca:#2C3163; --marca-escura:#A9B0E8; --marca-2:#86704A;
+  --papel:#F6F1E5; --papel-escuro:#12152A; --tinta:#1B1E38; --tinta-escura:#F2EBD9;
+  --fonte-corpo:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Helvetica Neue',Helvetica,'Segoe UI',Roboto,Arial,sans-serif;
+  --fonte-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+/* Landing/site da marca: paleta crua do design-guide + Poppins + botões pílula */
+/* FBKAV, Fundação Bom Conselho (casa de acolhimento do Frei Zito).
+   Marca dos 35 anos, 09/10/2026 (logo e brasão mandados pelo Thayan; o roxo
+   de 02/10 saiu de uma logo que não era da casa e foi aposentado).
+   Medido na logo dos 35 anos: terracota #C35D1C (casa, coração e letras).
+   Na tela a marca é o mesmo terracota um pouco mais fechado, #AC5219, porque
+   o da logo não segura texto branco (4,28:1); o #AC5219 dá 5,28:1 com branco
+   e 4,91:1 sobre o papel. Medido no brasão: louros entre #246036 e #2A663C;
+   o detalhe (--marca-2) é o louro #2F7044, um passo mais claro pra ficar
+   legível no escuro (4,62:1). Papel creme quente, tinta marrom escuro. */
+:root[data-cliente="fbkav"]{
+  --marca:#AC5219; --marca-escura:#E8915A; --marca-2:#2F7044;
+  --papel:#FBF6EE; --papel-escuro:#1A1410; --tinta:#2B1D14; --tinta-escura:#F5ECE2;
+  /* Fonte do sistema, como o Pré-Enta e o JGermano (decisão de 04/09/2026):
+     nada pra baixar, e o app parece do aparelho. */
+  --fonte-corpo:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Helvetica Neue',Helvetica,'Segoe UI',Roboto,Arial,sans-serif;
+  --fonte-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+
+/* Minha Casinha (app de finanças da família, gefftrader.github.io/minha-casinha)
+   Casa quente: terracota de telha como acento (5,9:1 com branco, 5,4:1 no
+   papel) e sálvia como detalhe. As duas também são as cores das pessoas na
+   divisão 50/50 (1ª pessoa sálvia, 2ª terracota). Papel de linho, tinta
+   marrom quase preta. Serifa Fraunces só em título e no número grande. */
+:root[data-cliente="casinha"]{
+  --marca:#A24A26; --marca-escura:#E0956F; --marca-2:#4F6F5C;
+  --papel:#F7F3EC; --papel-escuro:#191512; --tinta:#211C17; --tinta-escura:#F2EBE1;
+  --fonte-titulo:'Fraunces',Georgia,'Times New Roman',serif;
+}
+
+:root[data-cliente="geff-site"]{
+  --marca:var(--gt-verde-fundo); --marca-2:var(--gt-slate);
+  --papel:#FBFCFB; --tinta:var(--gt-marinho);
+  --fonte-corpo:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --raio-xl:20px;
+}
+
+/* ---------- 5. BASE MÍNIMA ---------- */
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{margin:0; background:var(--bg); color:var(--text); font-family:var(--fonte-corpo);
+  font-size:var(--fs-base); line-height:1.5; -webkit-font-smoothing:antialiased;
+  transition:background .2s, color .2s;}
+h1,h2,h3{font-family:var(--fonte-titulo); font-weight:var(--peso-titulo); letter-spacing:var(--kern-titulo); margin:0;}
+h1{font-size:var(--fs-lg);} h2{font-size:var(--fs-md);} h3{font-size:var(--fs-base);}
+a{color:var(--accent); text-decoration:none;}
+img,svg,video{max-width:100%; height:auto;}
+.num{font-variant-numeric:tabular-nums;}
+.mono{font-family:var(--fonte-mono);}
+.muted{color:var(--text-3); font-size:var(--fs-sm);}
+.marca{font-family:var(--fonte-marca);}
+
+/* ---------- 6. ALIASES DE MIGRAÇÃO ---------- */
+/* Cobrem os nomes antigos de central.html e painel.html enquanto não são
+   convertidos. PRAZO: apagar este bloco até 30/11/2026. Depois disso,
+   --surface2 e --surface-2 coexistindo vira o novo problema. */
+:root{
+  --surface2:var(--surface-2); --sec:var(--text-2); --muted:var(--text-3);   /* central.html */
+  --txt:var(--text); --sombra:var(--sombra-1); --mono:var(--fonte-mono);
+  --text-secondary:var(--text-2); --text-muted:var(--text-3);                /* painel.html */
+  --accent-bg:var(--accent-suave); --accent2:var(--accent-2); --accent2-bg:var(--accent-2-suave);
+  --success:var(--ok); --success-bg:var(--ok-suave); --danger:var(--bad); --danger-bg:var(--bad-suave);
+  --radius:var(--raio); --radius-lg:var(--raio-lg);
+  --font-body:var(--fonte-corpo); --font-display:var(--fonte-titulo);
+}
